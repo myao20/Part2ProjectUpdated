@@ -1,0 +1,22 @@
+data_directory: ../data/
+image_paths: ../data/train/
+
+dataset:
+  csv_name: training_data.csv
+  num_each_class: 500
+  split:
+    ratio_train: 0.8
+    ratio_valid: 0.1
+    ratio_test: 0.1
+
+dataloader:
+  batch_size: 32
+
+device: cpu
+seed: 42
+training:
+  num_epochs: 50
+  optimizer:
+    learning_rate: 0.001
+    momentum: 0.9
+
