@@ -67,7 +67,7 @@ def split_data(csv_name):
 
 
 def main():
-    make_csv(config["image_paths"], config["num_each_class"], config["csv_name"])
+    make_csv(config["image_paths"], config["dataset"]["num_each_class"], config["dataset"]["csv_name"])
 
 
 if __name__ == "__main__":
