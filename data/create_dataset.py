@@ -7,13 +7,13 @@ CONFIG_PATH = "../configs/"
 
 
 def load_config(config_name):
-    with open(os.path.join(CONFIG_PATH), config_name) as file:
+    with open(os.path.join(CONFIG_PATH, config_name)) as file:
         my_config = yaml.safe_load(file)
     return my_config
 
 
 def load_labels(labels_path):
-    csv_path = os.path.join(labels_path, "trainLabels.csv/trainLabels.csv")
+    csv_path = os.path.join(labels_path, "trainLabels.csv")
     return pd.read_csv(csv_path)
 
 
