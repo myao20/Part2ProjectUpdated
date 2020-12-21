@@ -2,6 +2,8 @@ import os
 import pandas as pd
 import yaml
 from sklearn.model_selection import train_test_split
+from imutils import paths
+
 
 CONFIG_PATH = "../configs/"
 
@@ -25,14 +27,15 @@ def make_csv(image_paths, num_each_class, csv_name):
     # turn 5 classes into 2
     labels.loc[labels["level"] <= 1, "level"] = 0  # no-DR if level 0, 1
     labels.loc[labels["level"] > 1, "level"] = 1  # DR if level > 1
-
+    image_paths = list(paths.list_images(image_paths))
     num0, num1 = 0, 0
-
     levels = []
     images = []
     for image_path in image_paths:
         image = os.path.basename(image_path)
         image = os.path.splitext(image)[0]
+
+        # TODO: fix below line
         level = labels[labels["image"] == image].level.to_numpy()[0]
         if level == 0:
             if num0 >= num_each_class:

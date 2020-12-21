@@ -1,3 +1,4 @@
+imutils
 albumentations==0.5.2
 cycler==0.10.0
 dataclasses==0.8
