@@ -35,7 +35,6 @@ def make_csv(image_paths, num_each_class, csv_name):
         image = os.path.basename(image_path)
         image = os.path.splitext(image)[0]
 
-        # TODO: fix below line
         level = labels[labels["image"] == image].level.to_numpy()[0]
         if level == 0:
             if num0 >= num_each_class:

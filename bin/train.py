@@ -50,6 +50,7 @@ def main():
                                                                      optimizer=optimizer_fine_tune_added_layers,
                                                                      num_epochs=config["training"]["num_epochs"],
                                                                      criterion=criterion)
+    # TODO: output graphs? - find some sort of tracker
     return train_loss, train_accuracy, val_loss, val_accuracy
 
 
