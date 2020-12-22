@@ -3,7 +3,7 @@ import os
 
 from torch import optim, nn
 
-from data.dataloader import create_data_loaders
+from datadir.dataloader import create_data_loaders
 from model.base import model
 from training.trainer import validate, fit
 
@@ -13,7 +13,7 @@ CONFIG_PATH = "../configs/"
 
 
 def load_config(config_name):
-    with open(os.path.join(CONFIG_PATH), config_name) as file:
+    with open(os.path.join(CONFIG_PATH, config_name)) as file:
         my_config = yaml.safe_load(file)
     return my_config
 
@@ -55,5 +55,10 @@ def main():
 
 
 if __name__ == "__main__":
+    # import sys
+    # sys.path.append("../")
+    # sys.path.append("../datadir/")
+    # sys.path.append("../model/")
+    # sys.path.append("../training/")
     main()
 

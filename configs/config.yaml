@@ -1,8 +1,8 @@
-data_directory: ../data/
-image_paths: ../data/train005/
+data_directory: ../datadir/
+image_paths: ../datadir/train005/
 
 dataset:
-  csv_name: ../data/training_data.csv
+  csv_name: ../datadir/training_data.csv
   num_each_class: 300
   split:
     ratio_train: 0.8
