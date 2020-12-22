@@ -2,8 +2,8 @@ import os
 import yaml
 from torch.utils.data import DataLoader
 
-from datadir.create_dataset import split_data
-from datadir.dataset import DRDataset
+from data.create_dataset import split_data
+from data.dataset import DRDataset
 
 CONFIG_PATH = "../configs/"
 
@@ -23,7 +23,7 @@ def create_data_loaders(csv_name):
     val_data = DRDataset(x_val, y_val, tfms=0)
     test_data = DRDataset(x_test, y_test, tfms=0)
 
-    # datadir loaders
+    # data loaders
     train_loader = DataLoader(train_data, batch_size=config["batch_size"], shuffle=True)
     val_loader = DataLoader(val_data, batch_size=config["batch_size"], shuffle=False)
     test_loader = DataLoader(test_data, batch_size=config["batch_size"], shuffle=False)
