@@ -2,9 +2,9 @@ import time
 import os
 
 from torch import optim, nn
-import sys
-
-sys.path.append("../data/")
+# import sys
+#
+# sys.path.append("../data/")
 from data.dataloader import create_data_loaders
 from model.base import model
 from training.trainer import validate, fit
