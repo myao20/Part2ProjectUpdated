@@ -92,6 +92,8 @@ def main():
     write_list_to_file(val_loss, "valloss1.txt")
     write_list_to_file(val_accuracy, "valaccuracy1.txt")
 
+    save_model(model_fine_tune_added_layers, "models/model2000.pth")
+
     return train_loss, train_accuracy, val_loss, val_accuracy
 
 
