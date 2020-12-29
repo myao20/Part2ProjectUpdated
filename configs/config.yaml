@@ -1,5 +1,6 @@
 data_directory: ../data/
 image_paths: ../data/train001/
+output_path: ../outputs/
 
 dataset:
   csv_name: ../data/training_data_6000.csv
