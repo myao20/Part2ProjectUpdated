@@ -34,8 +34,8 @@ def fit(model, train_loader, optimizer, criterion):
     train_running_correct = 0
     dataset_length = len(train_loader.dataset)
     for i, data in tqdm(enumerate(train_loader), total=int(dataset_length / train_loader.batch_size)):
-        if i == 0:
-            print(dataset_length)
+        # if i == 0:
+        #     print(dataset_length)
         data, target = data[0].cuda(), data[1].cuda()
         optimizer.zero_grad()
         outputs = model(data)
