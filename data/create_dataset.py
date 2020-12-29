@@ -60,11 +60,11 @@ def split_data(csv_name):
     df = pd.read_csv(os.path.join(config["data_directory"], csv_name))
     X = df.Image_Path.values
     y = df.has_DR.values
-    test_val_size = config["ratio_test"] + config["ratio_valid"]
+    test_val_size = config["dataset"]["split"]["ratio_test"] + config["dataset"]["split"]["ratio_valid"]
     (x_train, x_test_val, y_train, y_test_val) = (train_test_split(X, y, test_size=test_val_size,
                                                                    random_state=config["seed"]))
     (x_val, x_test, y_val, y_test) = (train_test_split(x_test_val, y_test_val,
-                                                       test_size=config["ratio_test"] / test_val_size, random_state=42))
+                                                       test_size=config["dataset"]["split"]["ratio_test"] / test_val_size, random_state=42))
     return x_train, y_train, x_val, x_test, y_val, y_test
 
 
