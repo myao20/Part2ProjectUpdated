@@ -24,8 +24,8 @@ def create_data_loaders(csv_name):
     test_data = DRDataset(x_test, y_test, tfms=0)
 
     # data loaders
-    train_loader = DataLoader(train_data, batch_size=config["batch_size"], shuffle=True)
-    val_loader = DataLoader(val_data, batch_size=config["batch_size"], shuffle=False)
-    test_loader = DataLoader(test_data, batch_size=config["batch_size"], shuffle=False)
+    train_loader = DataLoader(train_data, batch_size=config["dataloder"]["batch_size"], shuffle=True)
+    val_loader = DataLoader(val_data, batch_size=config["dataloder"]["batch_size"], shuffle=False)
+    test_loader = DataLoader(test_data, batch_size=config["dataloder"]["batch_size"], shuffle=False)
 
     return train_loader, val_loader, test_loader
