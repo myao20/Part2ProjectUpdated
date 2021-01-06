@@ -14,7 +14,7 @@ import yaml
 CONFIG_PATH = "../configs/"
 
 
-def load_config(config_name):
+def load_config(config_name: str):
     with open(os.path.join(CONFIG_PATH, config_name)) as file:
         my_config = yaml.safe_load(file)
     return my_config
@@ -87,12 +87,12 @@ def main():
                                                                      num_epochs=config["training"]["num_epochs"],
                                                                      criterion=criterion)
     # TODO: output graphs? - find some sort of tracker
-    write_list_to_file(train_loss, "trainloss1.txt")
-    write_list_to_file(train_accuracy, "trainacc1.txt")
-    write_list_to_file(val_loss, "valloss1.txt")
-    write_list_to_file(val_accuracy, "valaccuracy1.txt")
-
-    save_model(model_fine_tune_added_layers, "models/model2000.pth")
+    # write_list_to_file(train_loss, "trainloss6000.txt")
+    # write_list_to_file(train_accuracy, "trainacc6000.txt")
+    # write_list_to_file(val_loss, "valloss6000.txt")
+    # write_list_to_file(val_accuracy, "valaccuracy6000.txt")
+    #
+    # save_model(model_fine_tune_added_layers, "models/model6000.pth")
 
     return train_loss, train_accuracy, val_loss, val_accuracy
 
