@@ -1,9 +1,25 @@
+import os
 import matplotlib.pyplot as plt
+from typing import List
+
+
+import yaml
+
+CONFIG_PATH = "../configs/"
+
+
+def load_config(config_name: str):
+    with open(os.path.join(CONFIG_PATH, config_name)) as file:
+        my_config = yaml.safe_load(file)
+    return my_config
+
+
+config = load_config("config.yaml")
 
 
 # TODO: edit path name - refactor, put in different folder - utils?
-# Todo type hinting
-def make_plots(train_loss, train_accuracy, val_loss, val_accuracy, path_name) -> None:
+def make_plots(train_loss: List[float], train_accuracy: List[float], val_loss: List[float], val_accuracy: List[float],
+               path_name: str) -> None:
 
     # with open('C:/path/numbers.txt') as f:
     # lines = f.read().splitlines()
