@@ -1,5 +1,5 @@
 import torch
-from tqdm import tqdm
+#from tqdm import tqdm
 
 
 def validate(model, val_loader, criterion):
@@ -9,7 +9,8 @@ def validate(model, val_loader, criterion):
     val_running_correct = 0
     dataset_length = len(val_loader.dataset)
     with torch.no_grad():
-        for i, data in tqdm(enumerate(val_loader), total=int(dataset_length / val_loader.batch_size)):
+        #for i, data in tqdm(enumerate(val_loader), total=int(dataset_length / val_loader.batch_size)):
+        for data in val_loader:
             data, target = data[0].cuda(), data[1].cuda()
             outputs = model(data)
             y = torch.zeros(list(outputs.size())[0], 2)
@@ -33,9 +34,8 @@ def fit(model, train_loader, optimizer, criterion):
     train_running_loss = 0.0
     train_running_correct = 0
     dataset_length = len(train_loader.dataset)
-    for i, data in tqdm(enumerate(train_loader), total=int(dataset_length / train_loader.batch_size)):
-        # if i == 0:
-        #     print(dataset_length)
+    #for i, data in tqdm(enumerate(train_loader), total=int(dataset_length / train_loader.batch_size)):
+    for data in train_loader:
         data, target = data[0].cuda(), data[1].cuda()
         optimizer.zero_grad()
         outputs = model(data)
