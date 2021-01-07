@@ -51,8 +51,14 @@ class DRDataset(Dataset):
         try:
             image = self.aug(image=np.array(image))["image"]
             image = np.transpose(image, (2, 0, 1)).astype(np.float32)
+            label = self.y[i]
+            return torch.tensor(image, dtype=torch.float), torch.tensor(
+                label, dtype=torch.long
+            )
         except IndexError:
             log.error(path)
+
+        image = np.transpose(image, (2, 0, 1)).astype(np.float32)
         label = self.y[i]
         return torch.tensor(image, dtype=torch.float), torch.tensor(
             label, dtype=torch.long
