@@ -7,15 +7,13 @@ from PIL import Image
 from torch.utils.data import Dataset
 
 log = logging.getLogger(__name__)
-# Todo make this configurable from config
-# Todo logging, typehinting
+
 
 class DRDataset(Dataset):
     def __init__(self, path, labels, tfms=None):
         self.X = path
         self.y = labels
         # apply augmentations
-        # TODO: can put below numbers into config file
         if tfms == 0:  # if validating
             self.aug = albumentations.Compose(
                 [
@@ -49,10 +47,10 @@ class DRDataset(Dataset):
     def __getitem__(self, i):
         image = Image.open(self.X[i])
         path = self.X[i]
-        print(i, path)
+        log.info(i, path)
         image = self.aug(image=np.array(image))["image"]
         image = np.transpose(image, (2, 0, 1)).astype(np.float32)
         label = self.y[i]
         return torch.tensor(image, dtype=torch.float), torch.tensor(
             label, dtype=torch.long
-        ), path
+        )
