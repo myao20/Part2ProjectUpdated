@@ -1,5 +1,6 @@
 import os
 from typing import Tuple
+import numpy as np
 
 import pandas as pd
 import yaml
@@ -66,15 +67,19 @@ def split_data(csv_name: str) -> Tuple:
             config["dataset"]["split"]["ratio_test"]
             + config["dataset"]["split"]["ratio_valid"]
     )
-    (x_train, x_test_val, y_train, y_test_val) = train_test_split(
-        X, y, test_size=test_val_size, random_state=config["seed"]
-    )
-    (x_val, x_test, y_val, y_test) = train_test_split(
-        x_test_val,
-        y_test_val,
-        test_size=config["dataset"]["split"]["ratio_test"] / test_val_size,
-        random_state=config["seed"],
-    )
+    try:
+        (x_train, x_test_val, y_train, y_test_val) = train_test_split(
+            X, y, test_size=test_val_size, random_state=config["seed"]
+        )
+        (x_val, x_test, y_val, y_test) = train_test_split(
+            x_test_val,
+            y_test_val,
+            test_size=config["dataset"]["split"]["ratio_test"] / test_val_size,
+            random_state=config["seed"],
+        )
+    except ValueError:
+        x_train, y_train = X, y
+        x_val, x_test, y_val, y_test = np.empty(0), np.empty(0), np.empty(0), np.empty(0)
     return x_train, y_train, x_val, y_val, x_test, y_test
 
 
