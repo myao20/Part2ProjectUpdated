@@ -49,7 +49,7 @@ class Trainer:
         self.val_loader = val_loader
         self.test_loader = test_loader
 
-        self.num_epochs = config["num_epochs"]
+        self.num_epochs = config["training"]["num_epochs"]
 
         # Metrics
         self.train_loss, self.train_accuracy = [], []
