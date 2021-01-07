@@ -76,7 +76,11 @@ def write_list_to_file(my_list, file_name, path_name="../outputs/raw_data/"):
 
 def main():
     criterion = nn.BCEWithLogitsLoss()
-    model_fine_tune_added_layers = model(pretrained=True, requires_grad=True, add_layers=True).cuda()
+    model_fine_tune_added_layers = model(
+        pretrained=config["model"]["pretrained"],
+        requires_grad=config["model"]["requires_grad"],
+        add_layers=config["model"]["add_layers"]
+    ).cuda()
     optimizer_fine_tune_added_layers = optim.SGD(model_fine_tune_added_layers.parameters(),
                                                  lr=config["training"]["optimizer"]["learning_rate"],
                                                  momentum=config["training"]["optimizer"]["momentum"])

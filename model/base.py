@@ -1,16 +1,8 @@
-import logging
-
 import torch.nn as nn
 from torchvision import models as models
 
-log = logging.getLogger(__name__)
 
-# Todo base should contain an abstract class for a model. You should keep a separate script for building your desired model from a config.
-#  In feats, dropout, num additional layers, activations et should be configurable from config
-# Todo use logging, typehinting
-
-
-def model(pretrained, requires_grad, add_layers):
+def model(pretrained: bool, requires_grad: bool, add_layers: bool):
     base_model = models.resnet50(progress=True, pretrained=pretrained)
     # freeze hidden layers
     if not requires_grad:

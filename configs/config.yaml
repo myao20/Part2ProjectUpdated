@@ -10,6 +10,11 @@ dataset:
     ratio_valid: 0.1
     ratio_test: 0.1
 
+model:
+  pretrained: True
+  requires_grad: True
+  add_layers: True
+
 dataloader:
   batch_size: 32
 
