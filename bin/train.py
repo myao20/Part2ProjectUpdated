@@ -1,15 +1,15 @@
-import time
+import argparse
 import os
-import matplotlib.pyplot as plt
-
-import torch
+import logging
 from torch import optim, nn
 
 from data.dataloader import create_data_loaders
 from model.base import model
-from training.trainer import validate, fit
+from training.trainer import Trainer
 
 import yaml
+
+log = logging.getLogger(__name__)
 
 CONFIG_PATH = "../configs/"
 
@@ -20,87 +20,67 @@ def load_config(config_name: str):
     return my_config
 
 
-config = load_config("config.yaml")
-
-
-def train_model(train_loader, val_loader, my_model, optimizer, num_epochs, criterion):
-    train_loss, train_accuracy = [], []
-    val_loss, val_accuracy = [], []
-    start = time.time()
-    for epoch in range(num_epochs):
-        print('Epoch {}/{}'.format(epoch, num_epochs - 1))
-        train_epoch_loss, train_epoch_accuracy = fit(my_model, train_loader, optimizer, criterion)
-        val_epoch_loss, val_epoch_accuracy = validate(my_model, val_loader, criterion)
-        train_loss.append(train_epoch_loss)
-        train_accuracy.append(train_epoch_accuracy)
-        val_loss.append(val_epoch_loss)
-        val_accuracy.append(val_epoch_accuracy)
-    end = time.time()
-    print(f"{(end - start) / 60:.3f} minutes")
-    return train_loss, train_accuracy, val_loss, val_accuracy
-
-
-def save_model(my_model, path_name):
-    print('Saving model...')
-    torch.save(my_model.state_dict(), os.path.join(config["output_path"], path_name))
-
-
-# TODO: edit path name - refactor, put in different folder - utils?
-def make_plots(train_loss, train_accuracy, val_loss, val_accuracy, path_name):
-
-    #with open('C:/path/numbers.txt') as f:
-    #lines = f.read().splitlines()
-    plt.figure(figsize=(10, 7))
-    plt.plot(train_accuracy, color='green', label='train accuracy')
-    plt.plot(val_accuracy, color='blue', label='validation accuracy')
-    plt.xlabel('Epochs')
-    plt.ylabel('Accuracy')
-    plt.legend()
-    plt.savefig(os.path.join(config["output_path"], path_name))
-
-    plt.figure(figsize=(10, 7))
-    plt.plot(train_loss, color='orange', label='train loss')
-    plt.plot(val_loss, color='red', label='validation loss')
-    plt.xlabel('Epochs')
-    plt.ylabel('Loss')
-    plt.legend()
-    plt.savefig(os.path.join(config["output_path"], path_name))
-
-
-def write_list_to_file(my_list, file_name, path_name="../outputs/raw_data/"):
-    file_name = os.path.join(path_name, file_name)
-    with open(file_name, 'w') as f:
-        for item in my_list:
-            f.write("%s\n" % item)
+# Todo check config parsing from command line. You should be able to launch a run with: python bin/train.py -c $PATH_TO_CONFIG
+# Todo use typehinting
+# Todo setup logging
 
 
 def main():
-    criterion = nn.BCEWithLogitsLoss()
+    # Create Data
+    train_loader, val_loader, test_loader = create_data_loaders(
+        config["dataset"]["csv_name"]
+    )
+
+    # Create Model
     model_fine_tune_added_layers = model(
         pretrained=config["model"]["pretrained"],
         requires_grad=config["model"]["requires_grad"],
         add_layers=config["model"]["add_layers"]
     ).cuda()
-    optimizer_fine_tune_added_layers = optim.SGD(model_fine_tune_added_layers.parameters(),
-                                                 lr=config["training"]["optimizer"]["learning_rate"],
-                                                 momentum=config["training"]["optimizer"]["momentum"])
-    train_loader, val_loader, test_loader = create_data_loaders(config["dataset"]["csv_name"])
-    train_loss, train_accuracy, val_loss, val_accuracy = train_model(train_loader, val_loader,
-                                                                     model_fine_tune_added_layers,
-                                                                     optimizer=optimizer_fine_tune_added_layers,
-                                                                     num_epochs=config["training"]["num_epochs"],
-                                                                     criterion=criterion)
-    # TODO: output graphs? - find some sort of tracker
-    # write_list_to_file(train_loss, "trainloss6000.txt")
-    # write_list_to_file(train_accuracy, "trainacc6000.txt")
-    # write_list_to_file(val_loss, "valloss6000.txt")
-    # write_list_to_file(val_accuracy, "valaccuracy6000.txt")
-    #
-    # save_model(model_fine_tune_added_layers, "models/model6000.pth")
 
-    return train_loss, train_accuracy, val_loss, val_accuracy
+    # Create loss
+    criterion = nn.BCEWithLogitsLoss()
+
+    # Create optimizer
+    optimizer_fine_tune_added_layers = optim.SGD(
+        model_fine_tune_added_layers.parameters(),
+        lr=config["training"]["optimizer"]["learning_rate"],
+        momentum=config["training"]["optimizer"]["momentum"]
+    )
+
+    # Create Trainer
+    trainer = Trainer(
+        model=model_fine_tune_added_layers,
+        optimizer=optimizer_fine_tune_added_layers,
+        train_loader=train_loader,
+        val_loader=val_loader,
+        test_loader=test_loader,
+        criterion=criterion,
+    )
+
+    # train
+    trainer.train_model()
+
+    # Write logs
+    # trainer.write_logs_to_file()
+    #
+    # trainer.save_model_to_file("models/model2000.pth")
 
 
 if __name__ == "__main__":
+    # Parse command line args
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-c",
+        "--config",
+        default="../configs/",
+        help="Path to project config file",
+        required=False,
+    )
+    args = parser.parse_args()
+
+    parser.parse_args()
+    config = load_config("config.yaml")
+
     main()
 

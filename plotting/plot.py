@@ -17,10 +17,11 @@ def load_config(config_name: str):
 config = load_config("config.yaml")
 
 
-# TODO: edit path name - refactor, put in different folder - utils?
+# TODO: edit path name - refactor
 def make_plots(train_loss: List[float], train_accuracy: List[float], val_loss: List[float], val_accuracy: List[float],
                path_name: str) -> None:
 
+    # TODO: put below into separate function which returns a list from a file e.g. train_loss
     # with open('C:/path/numbers.txt') as f:
     # lines = f.read().splitlines()
     plt.figure(figsize=(10, 7))
@@ -38,3 +39,5 @@ def make_plots(train_loss: List[float], train_accuracy: List[float], val_loss: L
     plt.ylabel("Loss")
     plt.legend()
     plt.savefig(os.path.join(config["output_path"], path_name))
+
+# TODO: add main function to make plots from files
