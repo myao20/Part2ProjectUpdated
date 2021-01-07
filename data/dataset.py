@@ -6,33 +6,7 @@ import albumentations
 from PIL import Image
 from torch.utils.data import Dataset
 
-# TODO: if below to be used often, could put into a function in utils folder
-console = logging.StreamHandler()
-console.setLevel(logging.INFO)
-formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
-console.setFormatter(formatter)
 log = logging.getLogger(__name__)
-log.addHandler(console)
-
-console = logging.StreamHandler()
-console.setLevel(logging.INFO)
-# set a format which is simpler for console use
-formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
-# tell the handler to use this format
-console.setFormatter(formatter)
-# add the handler to the root logger
-logging.getLogger('').addHandler(console)
-
-# Now, we can log to the root logger, or any other logger. First the root...
-logging.info('Jackdaws love my big sphinx of quartz.')
-
-# Now, define a couple of other loggers which might represent areas in your
-# application:
-
-logger1 = logging.getLogger('myapp.area1')
-
-logger1.debug('Quick zephyrs blow, vexing daft Jim.')
-logger1.info('How quickly daft jumping zebras vex.')
 
 
 class DRDataset(Dataset):

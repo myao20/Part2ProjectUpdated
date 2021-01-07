@@ -10,6 +10,16 @@ from training.trainer import Trainer
 import yaml
 
 log = logging.getLogger(__name__)
+log.setLevel(logging.INFO)
+fh = logging.FileHandler('logfile.log')
+fh.setLevel(logging.INFO)
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+ch.setFormatter(formatter)
+log.addHandler(fh)
+log.addHandler(ch)
 
 CONFIG_PATH = "../configs/"
 
@@ -20,7 +30,7 @@ def load_config(config_name: str):
     return my_config
 
 
-# Todo check config parsing from command line. You should be able to launch a run with: python bin/train.py -c $PATH_TO_CONFIG
+# launch a run with: python bin/train.py -c $PATH_TO_CONFIG
 # Todo use typehinting
 # Todo setup logging
 
@@ -59,6 +69,7 @@ def main():
     )
 
     # train
+    log.info("Starting to train the model")
     trainer.train_model()
 
     # Write logs
