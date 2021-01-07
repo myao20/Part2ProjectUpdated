@@ -11,11 +11,11 @@ import yaml
 
 log = logging.getLogger("mainLogger")
 log.setLevel(logging.INFO)
-fh = logging.FileHandler('../logs/logfile.log')
-fh.setLevel(logging.INFO)
+fh = logging.FileHandler('../logs/bad_images.log')
+fh.setLevel(logging.ERROR)
 ch = logging.StreamHandler()
 ch.setLevel(logging.INFO)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
 fh.setFormatter(formatter)
 ch.setFormatter(formatter)
 log.addHandler(fh)
@@ -31,9 +31,6 @@ def load_config(config_name: str):
 
 
 # launch a run with: python bin/train.py -c $PATH_TO_CONFIG
-# Todo use typehinting
-# Todo setup logging
-
 
 def main():
     # Create Data

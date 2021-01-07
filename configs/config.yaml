@@ -3,12 +3,12 @@ image_paths: ../data/train001/
 output_path: ../outputs/
 
 dataset:
-  csv_name: ../data/training_data_2000.csv
-  num_each_class: 3000
+  csv_name: ../data/max_images.csv
+  num_each_class: 13500
   split:
-    ratio_train: 0.8
-    ratio_valid: 0.1
-    ratio_test: 0.1
+    ratio_train: 1.0
+    ratio_valid: 0.0
+    ratio_test: 0.0
 
 model:
   pretrained: True
