@@ -3,7 +3,7 @@ image_paths: ../data/train001/
 output_path: ../outputs/
 
 dataset:
-  csv_name: ../data/training_data_6000.csv
+  csv_name: ../data/training_data_2000.csv
   num_each_class: 3000
   split:
     ratio_train: 0.8
@@ -21,7 +21,7 @@ dataloader:
 device: cpu
 seed: 42
 training:
-  num_epochs: 2
+  num_epochs: 1
   optimizer:
     learning_rate: 0.001
     momentum: 0.9
