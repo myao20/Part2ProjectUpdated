@@ -6,7 +6,12 @@ import albumentations
 from PIL import Image
 from torch.utils.data import Dataset
 
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
+console.setFormatter(formatter)
 log = logging.getLogger(__name__)
+log.addHandler(console)
 
 
 class DRDataset(Dataset):
