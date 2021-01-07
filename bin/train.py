@@ -9,9 +9,9 @@ from training.trainer import Trainer
 
 import yaml
 
-log = logging.getLogger(__name__)
+log = logging.getLogger("mainLogger")
 log.setLevel(logging.INFO)
-fh = logging.FileHandler('logfile.log')
+fh = logging.FileHandler('../logs/logfile.log')
 fh.setLevel(logging.INFO)
 ch = logging.StreamHandler()
 ch.setLevel(logging.INFO)

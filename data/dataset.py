@@ -6,7 +6,7 @@ import albumentations
 from PIL import Image
 from torch.utils.data import Dataset
 
-log = logging.getLogger(__name__)
+log = logging.getLogger("mainLogger")
 
 
 class DRDataset(Dataset):
