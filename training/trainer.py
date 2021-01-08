@@ -58,7 +58,7 @@ class Trainer:
     def train_model(self) -> None:
         start = time.time()
         for epoch in range(self.num_epochs):
-            print("Epoch {}/{}".format(epoch, self.num_epochs - 1))
+            print("Epoch {}/{}".format(epoch+1, self.num_epochs))
 
             # Perform training and validation iterations
             train_epoch_loss, train_epoch_accuracy = self.train_iteration()
