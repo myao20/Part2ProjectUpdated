@@ -71,9 +71,10 @@ def main():
     trainer.train_model()
 
     # Write logs
-    # trainer.write_logs_to_file()
-    #
-    # trainer.save_model_to_file("models/model2000.pth")
+    log.info("Writing results to file")
+    trainer.write_logs_to_file()
+    log.info("Saving model")
+    trainer.save_model_to_file("models/test_model.pth")
 
 
 if __name__ == "__main__":

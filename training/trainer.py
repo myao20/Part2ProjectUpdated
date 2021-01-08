@@ -73,7 +73,7 @@ class Trainer:
         print(f"{(end - start) / 60:.3f} minutes")
 
     def train_iteration(self) -> Tuple[float, float]:
-        print("Training")
+        print("Training ...")
         self.model.train()
         train_running_loss = 0.0
         train_running_correct = 0
@@ -100,7 +100,7 @@ class Trainer:
         return train_loss, train_accuracy
 
     def validate(self) -> Tuple[float, float]:
-        print("Validating")
+        print("Validating ...")
         self.model.eval()
         val_running_loss = 0.0
         val_running_correct = 0
