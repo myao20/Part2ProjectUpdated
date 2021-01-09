@@ -14,6 +14,7 @@ model:
   pretrained: True
   requires_grad: True
   add_layers: True
+  model_to_test: models/test_model.pth
 
 dataloader:
   batch_size: 32
@@ -23,6 +24,6 @@ seed: 42
 training:
   num_epochs: 30
   optimizer:
-    learning_rate: 0.0001
+    learning_rate: 0.001
     momentum: 0.9
 

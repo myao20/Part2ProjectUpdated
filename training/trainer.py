@@ -125,10 +125,10 @@ class Trainer:
             return val_loss, val_accuracy
 
     def write_logs_to_file(self) -> None:
-        write_list_to_file(self.train_loss, "trainloss1.txt")
-        write_list_to_file(self.train_accuracy, "trainacc1.txt")
-        write_list_to_file(self.val_loss, "valloss1.txt")
-        write_list_to_file(self.val_accuracy, "valaccuracy1.txt")
+        write_list_to_file(self.train_loss, "trainloss2.txt")
+        write_list_to_file(self.train_accuracy, "trainacc2.txt")
+        write_list_to_file(self.val_loss, "valloss2.txt")
+        write_list_to_file(self.val_accuracy, "valacc2.txt")
 
     def save_model_to_file(self, filename: str) -> None:
         save_model(self.model, filename)
