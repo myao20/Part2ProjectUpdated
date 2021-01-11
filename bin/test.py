@@ -3,10 +3,9 @@ import sys
 import yaml
 import os
 import torch
+import tqdm
 from sklearn.metrics import accuracy_score, precision_score, f1_score, recall_score
 from sklearn.metrics import confusion_matrix
-from torch import nn
-
 from data.dataloader import create_data_loaders
 from model.base import model
 from torch.utils.data import DataLoader
@@ -50,7 +49,7 @@ def get_predictions(path_to_model: str, test_loader: DataLoader) -> Tuple[List[i
     dataset_length = len(test_loader.dataset)
     y_true, y_pred = [], []
     with torch.no_grad():
-        for data in test_loader:
+        for i, data in tqdm(enumerate(test_loader), total=dataset_length/test_loader.batch_size):
             data, target = data[0].cuda(), data[1].cuda()
             y_true.extend(target)
             outputs = test_model(data)
@@ -72,7 +71,7 @@ def log_metrics(y_true: List[int], y_pred: List[int]) -> None:
     log.info(f'Precision: {precision_score(y_true, y_pred):.2f}')
     log.info(f'Recall: {recall_score(y_true, y_pred):.2f}')
     log.info(f'F1 score: {f1_score(y_true, y_pred):.2f}')
-    log.info(f'Confusion matrix: {confusion_matrix(y_true, y_pred):.2f}')
+    print(confusion_matrix(y_true, y_pred))
 
 
 def main():
