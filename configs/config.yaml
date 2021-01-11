@@ -14,7 +14,11 @@ model:
   pretrained: True
   requires_grad: True
   add_layers: True
-  model_to_test: models/test_model.pth
+
+model_to_test:
+  pretrained: False
+  requires_grad: False
+  add_layers: True
 
 dataloader:
   batch_size: 32
