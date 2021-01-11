@@ -37,18 +37,15 @@ def load_config(config_name: str):
 config = load_config("config.yaml")
 
 
-def load_model(path_to_model: str) -> nn.Module:
-    model_fine_tune_added_layers = model(
+def get_predictions(path_to_model: str, test_loader: DataLoader) -> Tuple[List[int], List[int]]:
+    test_model = model(
         config["model_to_test"]["pretrained"],
         config["model_to_test"]["requires_grad"],
         config["model_to_test"]["add_layers"]
     ).cuda()
 
-    return model_fine_tune_added_layers.load_state_dict(torch.load(path_to_model))
-
-
-def get_predictions(model: nn.Module, test_loader: DataLoader) -> Tuple[List[int], List[int]]:
-    model.eval()
+    test_model.load_state_dict(torch.load(path_to_model))
+    test_model.eval()
     test_running_correct = 0
     dataset_length = len(test_loader.dataset)
     y_true, y_pred = [], []
@@ -56,7 +53,7 @@ def get_predictions(model: nn.Module, test_loader: DataLoader) -> Tuple[List[int
         for data in test_loader:
             data, target = data[0].cuda(), data[1].cuda()
             y_true.extend(target)
-            outputs = model(data)
+            outputs = test_model(data)
             y = torch.zeros(list(outputs.size())[0], 2)
             y[range(y.shape[0]), target] = 1
 
@@ -85,8 +82,7 @@ def main():
     )
     path_to_model = sys.argv[1]
     log.info(path_to_model)
-    model_to_test = load_model(path_to_model)
-    y_true, y_pred = get_predictions(model_to_test, test_loader)
+    y_true, y_pred = get_predictions(path_to_model, test_loader)
     log_metrics(y_true, y_pred)
 
 
