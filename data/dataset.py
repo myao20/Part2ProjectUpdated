@@ -18,9 +18,12 @@ class DRDataset(Dataset):
             self.aug = albumentations.Compose(
                 [
                     albumentations.Resize(224, 224, always_apply=True),
+                    # TODO: change to all 0.5, to normalise to range [-1, 1] and retrain + test
                     albumentations.Normalize(
-                        mean=[0.485, 0.456, 0.406],
-                        std=[0.229, 0.224, 0.225],
+                        # mean=[0.485, 0.456, 0.406],
+                        # std=[0.229, 0.224, 0.225],
+                        mean=[0.5, 0.5, 0.5],
+                        std=[0.5, 0.5, 0.5],
                         always_apply=True,
                     ),
                 ]
@@ -33,9 +36,12 @@ class DRDataset(Dataset):
                     albumentations.ShiftScaleRotate(
                         shift_limit=0.3, scale_limit=0.3, rotate_limit=30, p=1.0
                     ),
+                    # TODO: change to all 0.5, to normalise to range [-1, 1] and retrain + test
                     albumentations.Normalize(
-                        mean=[0.485, 0.456, 0.406],
-                        std=[0.229, 0.224, 0.225],
+                        # mean=[0.485, 0.456, 0.406],
+                        # std=[0.229, 0.224, 0.225],
+                        mean=[0.5, 0.5, 0.5],
+                        std=[0.5, 0.5, 0.5],
                         always_apply=True,
                     ),
                 ]
