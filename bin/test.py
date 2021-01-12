@@ -52,8 +52,8 @@ def get_predictions(path_to_model: str, test_loader: DataLoader) -> Tuple[List[i
             data, target = data[0].cuda(), data[1].cuda()
             y_true.extend(target)
             outputs = test_model(data)
-            y = torch.zeros(list(outputs.size())[0], 2)
-            y[range(y.shape[0]), target] = 1
+            # y = torch.zeros(list(outputs.size())[0], 2)
+            # y[range(y.shape[0]), target] = 1
 
             _, preds = torch.max(outputs.data, 1)
             y_pred.extend(preds)

@@ -105,7 +105,6 @@ class Trainer:
         val_running_loss = 0.0
         val_running_correct = 0
         dataset_length = len(self.val_loader.dataset)
-        #  val_loader.dataset.__sizeof__()?
         with torch.no_grad():
             for data in self.val_loader:
                 data, target = data[0].cuda(), data[1].cuda()
