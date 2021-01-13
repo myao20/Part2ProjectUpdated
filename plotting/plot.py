@@ -1,4 +1,4 @@
-import sys
+import argparse
 import os
 import matplotlib.pyplot as plt
 from typing import List, Tuple
@@ -28,6 +28,29 @@ def load_config(config_name: str):
 
 
 config = load_config("config.yaml")
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "--train-acc",
+    help="Path to train accuracy file",
+    required=True,
+)
+parser.add_argument(
+    "--val-acc",
+    help="Path to validation accuracy file",
+    required=True,
+)
+parser.add_argument(
+    "--train-loss",
+    help="Path to train loss file",
+    required=True,
+)
+parser.add_argument(
+    "--val-loss",
+    help="Path to validation loss file",
+    required=True,
+)
 
 
 def lists_from_files(path_to_file1: str, path_to_file2: str) -> Tuple[List[float], List[float]]:
@@ -62,20 +85,20 @@ def make_loss_plots(train_loss: List[float], val_loss: List[float], path_name: s
 
 def plot_accuracy(train_accuracy_path: str, val_accuracy_path: str) -> None:
     train_accuracy, val_accuracy = lists_from_files(train_accuracy_path, val_accuracy_path)
-    make_accuracy_plots(train_accuracy, val_accuracy, "plots/acc3.png")
+    make_accuracy_plots(train_accuracy, val_accuracy, "plots/acc4.png")
 
 
 def plot_loss(train_loss_path: str, val_loss_path: str) -> None:
     train_loss, val_loss = lists_from_files(train_loss_path, val_loss_path)
-    make_loss_plots(train_loss, val_loss, "plots/loss3.png")
+    make_loss_plots(train_loss, val_loss, "plots/loss4.png")
 
 
 def main():
-    file_names = sys.argv[1:]
+    args = parser.parse_args()
     log.info("Making accuracy plots")
-    plot_accuracy(file_names[0], file_names[1])
+    plot_accuracy(args.train_acc, args.val_acc)
     log.info("Making loss plots")
-    plot_loss(file_names[2], file_names[3])
+    plot_loss(args.train_loss, args.val_loss)
 
 
 if __name__ == "__main__":
