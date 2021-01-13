@@ -1,5 +1,5 @@
+import argparse
 import logging
-import sys
 import yaml
 import os
 import torch
@@ -78,7 +78,15 @@ def main():
     train_loader, val_loader, test_loader = create_data_loaders(
         config["dataset"]["csv_name"]
     )
-    path_to_model = sys.argv[1]
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-p",
+        "--model-path",
+        help="Path to model to be attacked",
+        required=True,
+    )
+    args = parser.parse_args()
+    path_to_model = args.model_path
     log.info(path_to_model)
     y_true, y_pred = get_predictions(path_to_model, test_loader)
     log_metrics(y_true, y_pred)
