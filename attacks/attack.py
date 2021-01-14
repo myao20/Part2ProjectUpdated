@@ -55,7 +55,7 @@ def test_attack(test_model: nn.Module, test_loader: DataLoader, eps: float, crit
     correct = 0
     dataset_length = len(test_loader.dataset)
 
-    for images, labels, path in test_loader:
+    for images, labels in test_loader:
         images = fgsm(test_model, images, labels, eps, criterion).cuda()
         labels = labels.cuda()
         outputs = test_model(images)
