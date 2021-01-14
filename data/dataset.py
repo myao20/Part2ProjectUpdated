@@ -17,8 +17,8 @@ class DRDataset(Dataset):
         if tfms == 0:  # if validating
             self.aug = albumentations.Compose(
                 [
-                    albumentations.Resize(224, 224, always_apply=True),
-                    # TODO: change to all 0.5, to normalise to range [-1, 1] and retrain + test
+                    # changed from Resize
+                    albumentations.CenterCrop(224, 224, always_apply=True),
                     albumentations.Normalize(
                         # mean=[0.485, 0.456, 0.406],
                         # std=[0.229, 0.224, 0.225],
@@ -31,12 +31,11 @@ class DRDataset(Dataset):
         else:  # if training
             self.aug = albumentations.Compose(
                 [
-                    albumentations.Resize(224, 224, always_apply=True),
+                    albumentations.CenterCrop(224, 224, always_apply=True),
                     albumentations.HorizontalFlip(p=1.0),
                     albumentations.ShiftScaleRotate(
                         shift_limit=0.3, scale_limit=0.3, rotate_limit=30, p=1.0
                     ),
-                    # TODO: change to all 0.5, to normalise to range [-1, 1] and retrain + test
                     albumentations.Normalize(
                         # mean=[0.485, 0.456, 0.406],
                         # std=[0.229, 0.224, 0.225],

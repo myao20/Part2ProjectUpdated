@@ -82,7 +82,7 @@ def main():
     parser.add_argument(
         "-p",
         "--model-path",
-        help="Path to model to be attacked",
+        help="Path to model to be tested",
         required=True,
     )
     args = parser.parse_args()

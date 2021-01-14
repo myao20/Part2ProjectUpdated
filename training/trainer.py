@@ -16,17 +16,13 @@ log = logging.getLogger(__name__)
 CONFIG_PATH = "../configs/"
 
 
-def load_config(config_name):
+def load_config(config_name: str):
     with open(os.path.join(CONFIG_PATH, config_name)) as file:
         my_config = yaml.safe_load(file)
     return my_config
 
 
 config = load_config("config.yaml")
-
-
-# Todo type hinting, logging
-# Todo add commentary to training funcs
 
 
 class Trainer:
@@ -70,7 +66,7 @@ class Trainer:
             self.val_loss.append(val_epoch_loss)
             self.val_accuracy.append(val_epoch_accuracy)
         end = time.time()
-        print(f"{(end - start) / 60:.3f} minutes")
+        log.info(f"{(end - start) / 60:.3f} minutes")
 
     def train_iteration(self) -> Tuple[float, float]:
         print("Training ...")
@@ -124,10 +120,10 @@ class Trainer:
             return val_loss, val_accuracy
 
     def write_logs_to_file(self) -> None:
-        write_list_to_file(self.train_loss, "trainloss3.txt")
-        write_list_to_file(self.train_accuracy, "trainacc3.txt")
-        write_list_to_file(self.val_loss, "valloss3.txt")
-        write_list_to_file(self.val_accuracy, "valacc3.txt")
+        write_list_to_file(self.train_loss, "trainloss4.txt")
+        write_list_to_file(self.train_accuracy, "trainacc4.txt")
+        write_list_to_file(self.val_loss, "valloss4.txt")
+        write_list_to_file(self.val_accuracy, "valacc4.txt")
 
     def save_model_to_file(self, filename: str) -> None:
         save_model(self.model, filename)
