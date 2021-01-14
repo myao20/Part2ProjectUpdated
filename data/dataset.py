@@ -18,7 +18,7 @@ class DRDataset(Dataset):
             self.aug = albumentations.Compose(
                 [
                     # changed from Resize
-                    albumentations.CenterCrop(224, 224, always_apply=True),
+                    albumentations.Resize(224, 224, always_apply=True),
                     albumentations.Normalize(
                         # mean=[0.485, 0.456, 0.406],
                         # std=[0.229, 0.224, 0.225],
@@ -31,7 +31,7 @@ class DRDataset(Dataset):
         else:  # if training
             self.aug = albumentations.Compose(
                 [
-                    albumentations.CenterCrop(224, 224, always_apply=True),
+                    albumentations.Resize(224, 224, always_apply=True),
                     albumentations.HorizontalFlip(p=1.0),
                     albumentations.ShiftScaleRotate(
                         shift_limit=0.3, scale_limit=0.3, rotate_limit=30, p=1.0
