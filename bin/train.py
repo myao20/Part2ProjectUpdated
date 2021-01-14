@@ -74,7 +74,7 @@ def main():
     log.info("Writing results to file")
     trainer.write_logs_to_file()
     log.info("Saving model")
-    trainer.save_model_to_file("models/model3.pth")
+    trainer.save_model_to_file("models/model4.pth")
 
 
 if __name__ == "__main__":
