@@ -109,7 +109,9 @@ def main():
     test_model.load_state_dict(torch.load(args.model_path))
     criterion = nn.BCEWithLogitsLoss()
     accuracies = run_attack(test_model, test_loader, epsilons, criterion)
+    log.info("Plotting results")
     plot_results(accuracies, epsilons, args.filename)
+    # TODO: add functionality to save a few perturbed images
 
 
 if __name__ == "__main__":
