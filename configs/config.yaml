@@ -3,12 +3,12 @@ image_paths: ../data/train001/
 output_path: ../outputs/
 
 dataset:
-  csv_name: ../data/balanced_5262.csv
-  num_each_class: 5262
+  csv_name: ../data/full_dataset.csv
+  num_each_class: 10000
   split:
-    ratio_train: 0.8
-    ratio_valid: 0.1
-    ratio_test: 0.1
+    ratio_train: 1.0
+    ratio_valid: 0.0
+    ratio_test: 0.0
 
 model:
   pretrained: True
@@ -26,7 +26,7 @@ dataloader:
 device: cpu
 seed: 42
 training:
-  num_epochs: 50
+  num_epochs: 1
   optimizer:
     learning_rate: 0.0001
     momentum: 0.9
