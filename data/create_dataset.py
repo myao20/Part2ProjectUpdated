@@ -1,5 +1,6 @@
 import os
 from typing import Tuple
+import logging
 import numpy as np
 
 import pandas as pd
@@ -9,6 +10,19 @@ from sklearn.model_selection import train_test_split
 
 # TODO: change this to be an absolute path e.g. when running train.py
 CONFIG_PATH = "../configs/"
+
+
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
+fh = logging.FileHandler('../logs/create_dataset.log')
+fh.setLevel(logging.DEBUG)
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+ch.setFormatter(formatter)
+log.addHandler(fh)
+log.addHandler(ch)
 
 
 def load_config(config_name: str):
@@ -57,6 +71,9 @@ def make_csv(image_paths: str, num_each_class: int, csv_name: str) -> None:
     df = pd.DataFrame(df_dict)
     df = df.sample(frac=1).reset_index(drop=True)
     df.to_csv(csv_name, index=False)
+    log.info(csv_name)
+    log.info(f'Number in 0 class: {num0}')
+    log.info(f'Number in 1 class: {num1}')
 
 
 def split_data(csv_name: str) -> Tuple:
