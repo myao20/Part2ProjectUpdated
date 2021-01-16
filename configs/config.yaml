@@ -3,8 +3,8 @@ image_paths: ../data/train001/
 output_path: ../outputs/
 
 dataset:
-  csv_name: ../data/full_dataset.csv
-  num_each_class: 10000
+  csv_name: ../data/dataset_6871.csv
+  num_each_class: 6871
   split:
     ratio_train: 1.0
     ratio_valid: 0.0
