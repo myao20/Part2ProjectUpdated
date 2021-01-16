@@ -85,12 +85,12 @@ def make_loss_plots(train_loss: List[float], val_loss: List[float], path_name: s
 
 def plot_accuracy(train_accuracy_path: str, val_accuracy_path: str) -> None:
     train_accuracy, val_accuracy = lists_from_files(train_accuracy_path, val_accuracy_path)
-    make_accuracy_plots(train_accuracy, val_accuracy, "plots/acc4.png")
+    make_accuracy_plots(train_accuracy, val_accuracy, "plots/acc6.png")
 
 
 def plot_loss(train_loss_path: str, val_loss_path: str) -> None:
     train_loss, val_loss = lists_from_files(train_loss_path, val_loss_path)
-    make_loss_plots(train_loss, val_loss, "plots/loss4.png")
+    make_loss_plots(train_loss, val_loss, "plots/loss6.png")
 
 
 def main():
