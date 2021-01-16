@@ -72,7 +72,8 @@ def run_attack(test_model: nn.Module, test_loader: DataLoader, epsilons: List[fl
     accuracies = []
 
     for eps in epsilons:
-        log.info(f'Epsilon: {eps:.4f}')
+        log.info("Epsilon:")
+        log.info(eps)
         acc = test_attack(test_model, test_loader, eps, criterion)
         log.info(f'Accuracy: {acc:.2f}')
         accuracies.append(acc)
