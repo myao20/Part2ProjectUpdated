@@ -72,8 +72,7 @@ def run_attack(test_model: nn.Module, test_loader: DataLoader, epsilons: List[fl
     accuracies = []
 
     for eps in epsilons:
-        log.info("Epsilon:")
-        log.info(eps)
+        log.info(f'Epsilon: {eps:.4f}')
         acc = test_attack(test_model, test_loader, eps, criterion)
         log.info(f'Accuracy: {acc:.2f}')
         accuracies.append(acc)
@@ -92,7 +91,7 @@ def plot_results(accuracies: List[float], epsilons: List[float], path_name: str)
 
 
 def main():
-    epsilons = config["attacks"]["epsilons"]
+    epsilons = [0, 0.2/255, 1/255, 2/255, 3/255, 4/255, 5/255]
     args = parser.parse_args()
     log.info(args.model_path)
 
