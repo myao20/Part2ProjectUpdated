@@ -82,9 +82,8 @@ def run_attack(test_model: nn.Module, test_loader: DataLoader, epsilons: List[fl
 
 def plot_results(accuracies: List[float], epsilons: List[float], path_name: str) -> None:
     plt.figure(figsize=(5, 5))
-    plt.plot(epsilons, accuracies, "*-")
+    plt.plot(epsilons, accuracies, "x-")
     plt.yticks(np.arange(0, 1.1, step=0.1))
-    plt.xticks(np.arange(0, .35, step=0.05))
     plt.title("Accuracy vs Epsilon")
     plt.xlabel("Epsilon")
     plt.ylabel("Accuracy")
@@ -92,7 +91,7 @@ def plot_results(accuracies: List[float], epsilons: List[float], path_name: str)
 
 
 def main():
-    epsilons = [0, 0.2/255, 1/255, 2/255, 3/255, 4/255, 5/255]
+    epsilons = config["attacks"]["epsilons"]
     args = parser.parse_args()
     log.info(args.model_path)
 

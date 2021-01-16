@@ -3,8 +3,8 @@ image_paths: ../data/train001/
 output_path: ../outputs/
 
 dataset:
-  csv_name: ../data/dataset_6871.csv
-  num_each_class: 6871
+  csv_name: ../data/balanced_5262.csv
+  num_each_class: 5262
   split:
     ratio_train: 0.8
     ratio_valid: 0.1
@@ -30,4 +30,7 @@ training:
   optimizer:
     learning_rate: 0.0001
     momentum: 0.9
+
+attacks:
+  epsilons: [0, 0.2/255, 1/255, 2/255, 3/255, 4/255, 5/255]
 
