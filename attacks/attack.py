@@ -9,6 +9,8 @@ from typing import List
 from torch import nn
 import yaml
 from torch.utils.data import DataLoader
+
+from attacks.pgd import pgd
 from data.dataloader import create_data_loaders
 from model.base import model
 
@@ -56,7 +58,7 @@ def test_attack(test_model: nn.Module, test_loader: DataLoader, eps: float, crit
     dataset_length = len(test_loader.dataset)
 
     for images, labels in test_loader:
-        images = fgsm(test_model, images, labels, eps, criterion).cuda()
+        images = pgd(test_model, images, labels, eps, criterion).cuda()
         labels = labels.cuda()
         outputs = test_model(images)
 
@@ -81,7 +83,7 @@ def run_attack(test_model: nn.Module, test_loader: DataLoader, epsilons: List[fl
 
 
 def plot_results(accuracies: List[float], epsilons: List[float], path_name: str) -> None:
-    plt.figure(figsize=(5, 5))
+    plt.figure(figsize=(8, 8))
     plt.plot(epsilons, accuracies, "x-")
     plt.yticks(np.arange(0, 1.1, step=0.1))
     plt.title("Accuracy vs Epsilon")
