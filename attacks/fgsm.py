@@ -3,8 +3,8 @@ from torch import nn
 
 
 def fgsm(model: nn.Module, images, labels, eps: float, criterion):
-    images = images.cuda()
-    labels = labels.cuda()
+    images = images.clone().detach().cuda()
+    labels = labels.clone().detach().cuda()
     images.requires_grad = True
 
     outputs = model(images)
@@ -16,6 +16,6 @@ def fgsm(model: nn.Module, images, labels, eps: float, criterion):
     loss = criterion(outputs, y)
     loss.backward()
     perturbed_images = images + eps * images.grad.sign()
-    perturbed_images = torch.clamp(perturbed_images, -1, 1)
+    perturbed_images = torch.clamp(perturbed_images, -1, 1).detach()
 
     return perturbed_images
