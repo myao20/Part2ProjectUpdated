@@ -4,6 +4,8 @@ import logging
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
+
+from attacks.cw import cw
 from attacks.fgsm import fgsm
 from typing import List
 from torch import nn
@@ -58,7 +60,8 @@ def test_attack(test_model: nn.Module, test_loader: DataLoader, eps: float, crit
     dataset_length = len(test_loader.dataset)
 
     for images, labels in test_loader:
-        images = fgsm(test_model, images, labels, eps, criterion).cuda()
+        # images = fgsm(test_model, images, labels, eps, criterion).cuda()
+        images = cw(test_model, images, labels).cuda()
         labels = labels.cuda()
         outputs = test_model(images)
 
@@ -78,7 +81,6 @@ def run_attack(test_model: nn.Module, test_loader: DataLoader, epsilons: List[fl
         acc = test_attack(test_model, test_loader, eps, criterion)
         log.info(f'Accuracy: {acc:.2f}')
         accuracies.append(acc)
-
     return accuracies
 
 
@@ -109,9 +111,11 @@ def main():
 
     test_model.load_state_dict(torch.load(args.model_path))
     criterion = nn.BCEWithLogitsLoss()
-    accuracies = run_attack(test_model, test_loader, epsilons, criterion)
-    log.info("Plotting results")
-    plot_results(accuracies, epsilons, args.filename)
+    # accuracies = run_attack(test_model, test_loader, epsilons, criterion)
+    # log.info("Plotting results")
+    # plot_results(accuracies, epsilons, args.filename)
+    accuracy = test_attack(test_model, test_loader, 0, criterion)
+    log.info(f'Accuracy after CW L2 attack: {accuracy:.2f}')
     # TODO: add functionality to save a few perturbed images
 
 
