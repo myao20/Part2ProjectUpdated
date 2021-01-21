@@ -50,7 +50,7 @@ parser.add_argument(
     "-f",
     "--filename",
     help="Name of plot file",
-    required=True,
+    required=False,
 )
 
 
