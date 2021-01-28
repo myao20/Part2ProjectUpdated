@@ -10,6 +10,8 @@ def pgd(model: nn.Module, images, labels, eps, criterion, alpha=2/255, iters=40)
     for i in range(iters):
         perturbed_images.requires_grad = True
         outputs = model(perturbed_images)
+        if i == 0:
+            initial_outputs = outputs
 
         model.zero_grad()
         y = torch.zeros(list(outputs.size())[0], 2)
@@ -22,4 +24,4 @@ def pgd(model: nn.Module, images, labels, eps, criterion, alpha=2/255, iters=40)
         delta = torch.clamp(perturbed_images - images, min=-eps, max=eps)
         images = torch.clamp(images + delta, min=-1, max=1).detach()
 
-    return images
+    return images.cuda(), initial_outputs

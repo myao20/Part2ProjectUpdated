@@ -18,4 +18,4 @@ def fgsm(model: nn.Module, images, labels, eps: float, criterion):
     perturbed_images = images + eps * images.grad.sign()
     perturbed_images = torch.clamp(perturbed_images, -1, 1).detach()
 
-    return perturbed_images
+    return perturbed_images.cuda(), outputs
