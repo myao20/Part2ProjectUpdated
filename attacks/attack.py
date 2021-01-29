@@ -91,7 +91,7 @@ def test_attack(test_model: nn.Module, test_loader: DataLoader, eps: float, crit
     perturbations = []
 
     for images, labels in test_loader:
-        adv_images, outputs = fgsm(test_model, images, labels, eps, criterion).cuda()
+        adv_images, outputs = fgsm(test_model, images, labels, eps, criterion)
         # adv_images = cw(test_model, images, labels).cuda()
         _, init_preds = torch.max(outputs.data, 1)
         labels = labels.cuda()
