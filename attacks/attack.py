@@ -65,7 +65,7 @@ parser.add_argument(
     required=False,
 )
 parser.add_argument(
-    "-af",
+    "-pf",
     "--perturb_filename",
     help="Name of perturbations file",
     required=False,
