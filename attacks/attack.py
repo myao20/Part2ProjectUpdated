@@ -19,9 +19,9 @@ from model.base import model
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 fh = logging.FileHandler('../logs/attacks.log')
-fh.setLevel(logging.DEBUG)
+fh.setLevel(logging.INFO)
 ch = logging.StreamHandler()
-ch.setLevel(logging.INFO)
+ch.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 fh.setFormatter(formatter)
 ch.setFormatter(formatter)
@@ -100,8 +100,8 @@ def test_attack(test_model: nn.Module, test_loader: DataLoader, eps: float, crit
         _, new_preds = torch.max(outputs.data, 1)
         if len(adv_examples) < 5:
             adv_example_indices = get_adv_indices(5 - len(adv_examples), init_preds, new_preds, labels)
-            log.info(f'Adversarial example indices: {adv_example_indices}')
             for i in adv_example_indices:
+                log.info(f'Adversarial example index: {i}')
                 adv_ex = adv_images[i].squeeze().detach().cpu().numpy()
                 adv_examples.append((init_preds[i].item(), new_preds[i].item(), adv_ex))
                 orig_ex = images[i].squeeze().detach().cpu().numpy()
@@ -147,6 +147,12 @@ def save_example_images(epsilons, examples, file_name):
     # Plot 5 examples of adversarial images for epsilon
     cnt = 0
     plt.figure(figsize=(20, 30))
+    log.debug(f'Length of epsilons: {len(epsilons)}')
+    log.debug(f'Length of examples: {len(examples)}')
+    log.debug(f'Length of examples[0]: {len(examples[0])}')
+    log.debug(f'Length of examples[0][0]: {len(examples[0][0])}')
+    log.debug(f'examples[0][0]: {examples[0][0]}')
+
     for i in range(len(epsilons)):
         for j in range(len(examples[i])):
             cnt += 1
@@ -163,7 +169,8 @@ def save_example_images(epsilons, examples, file_name):
 
 
 def main():
-    epsilons = [0, 0.2 / 255, 1 / 255, 2 / 255, 3 / 255, 4 / 255, 5 / 255]
+    # epsilons = [0, 0.2 / 255, 1 / 255, 2 / 255, 3 / 255, 4 / 255, 5 / 255]
+    epsilons = [0.2]
     args = parser.parse_args()
     log.info(args.model_path)
 
@@ -180,8 +187,8 @@ def main():
     test_model.load_state_dict(torch.load(args.model_path))
     criterion = nn.BCEWithLogitsLoss()
     accuracies, examples, orig_examples, perturbations = run_attack(test_model, test_loader, epsilons, criterion)
-    log.info("Plotting results")
-    plot_results(accuracies, epsilons, args.filename)
+    # log.info("Plotting results")
+    # plot_results(accuracies, epsilons, args.filename)
     log.info("Saving some adversarial images")
     save_example_images(epsilons, examples, args.adv_filename)
     log.info("Saving the original images")
