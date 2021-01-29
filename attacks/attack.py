@@ -147,16 +147,10 @@ def save_example_images(epsilons, examples, file_name):
     # Plot 5 examples of adversarial images for epsilon
     cnt = 0
     plt.figure(figsize=(20, 30))
-    log.debug(f'Length of epsilons: {len(epsilons)}')
-    log.debug(f'Length of examples: {len(examples)}')
-    log.debug(f'Length of examples[0]: {len(examples[0])}')
-    log.debug(f'Length of examples[0][0]: {len(examples[0][0])}')
-    log.debug(f'examples[0][0]: {examples[0][0]}')
-
     for i in range(len(epsilons)):
         for j in range(len(examples[i])):
             cnt += 1
-            plt.subplot(len(epsilons), len(examples[0]), cnt)
+            plt.subplot(len(epsilons), len(examples[1]), cnt)
             plt.xticks([], [])
             plt.yticks([], [])
             if j == 0:
@@ -170,7 +164,7 @@ def save_example_images(epsilons, examples, file_name):
 
 def main():
     # epsilons = [0, 0.2 / 255, 1 / 255, 2 / 255, 3 / 255, 4 / 255, 5 / 255]
-    epsilons = [0.2]
+    epsilons = [0, 0.002, 0.02]
     args = parser.parse_args()
     log.info(args.model_path)
 
