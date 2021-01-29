@@ -186,9 +186,9 @@ def main():
     log.info("Saving some adversarial images")
     save_example_images(epsilons, examples, args.adv_filename)
     log.info("Saving the original images")
-    save_example_images(epsilons, examples, args.orig_filename)
+    save_example_images(epsilons, orig_examples, args.orig_filename)
     log.info("Saving the perturbations")
-    save_example_images(epsilons, examples, args.perturb_filename)
+    save_example_images(epsilons, perturbations, args.perturb_filename)
 
     # accuracy = test_attack(test_model, test_loader, 0, criterion)
     # log.info(f'Accuracy after CW L2 attack: {accuracy:.2f}')
