@@ -82,7 +82,7 @@ def get_adv_indices(num: int, init_pre, new_pre, labels) -> np.ndarray:
 
 
 def test_attack(test_model: nn.Module, test_loader: DataLoader, eps: float, criterion) -> Tuple[
-    float, List[Tuple[Any, Any, Any]], List[Tuple[Any, Any, Any]], List[Tuple[Any, Any, Any]]]:
+                float, List[Tuple[Any, Any, Any]], List[Tuple[Any, Any, Any]], List[Tuple[Any, Any, Any]]]:
     test_model.eval()
     correct = 0
     dataset_length = len(test_loader.dataset)
@@ -116,7 +116,8 @@ def test_attack(test_model: nn.Module, test_loader: DataLoader, eps: float, crit
 
 
 def run_attack(test_model: nn.Module, test_loader: DataLoader, epsilons: List[float], criterion) -> Tuple[
-    List[float], List[List[Tuple[Any, Any, Any]]], List[List[Tuple[Any, Any, Any]]], List[List[Tuple[Any, Any, Any]]]]:
+                List[float], List[List[Tuple[Any, Any, Any]]], List[List[Tuple[Any, Any, Any]]],
+                List[List[Tuple[Any, Any, Any]]]]:
     accuracies = []
     examples = []
     orig_examples = []
@@ -143,7 +144,8 @@ def plot_results(accuracies: List[float], epsilons: List[float], path_name: str)
     plt.savefig(os.path.join(config["output_path"], path_name))
 
 
-def save_example_images(epsilons, examples, file_name):
+def save_example_images(epsilons: List[float], examples: List[List[Tuple[Any, Any, Any]]], file_name: str,
+                        scale_perturbations: bool):
     # Plot 5 examples of adversarial images for epsilon
     cnt = 0
     plt.figure(figsize=(20, 30))
@@ -156,6 +158,9 @@ def save_example_images(epsilons, examples, file_name):
             if j == 0:
                 plt.ylabel("Eps: {}".format(epsilons[i]), fontsize=14)
             orig_pred, new_pred, ex = examples[i][j]
+            # option to magnify perturbations so they're perceptible
+            if scale_perturbations:
+                ex = ex*100
             plt.title("{} -> {}".format(orig_pred, new_pred))
             plt.imshow(ex.transpose(2, 1, 0), cmap="gray")
     plt.tight_layout()
@@ -163,8 +168,8 @@ def save_example_images(epsilons, examples, file_name):
 
 
 def main():
-    # epsilons = [0, 0.2 / 255, 1 / 255, 2 / 255, 3 / 255, 4 / 255, 5 / 255]
-    epsilons = [0, 0.002, 0.02]
+    epsilons = [0, 0.2 / 255, 1 / 255, 2 / 255, 3 / 255, 4 / 255, 5 / 255]
+   # epsilons = [0, 0.002, 0.02]
     args = parser.parse_args()
     log.info(args.model_path)
 
@@ -184,11 +189,11 @@ def main():
     # log.info("Plotting results")
     # plot_results(accuracies, epsilons, args.filename)
     log.info("Saving some adversarial images")
-    save_example_images(epsilons, examples, args.adv_filename)
+    save_example_images(epsilons, examples, args.adv_filename, False)
     log.info("Saving the original images")
-    save_example_images(epsilons, orig_examples, args.orig_filename)
+    save_example_images(epsilons, orig_examples, args.orig_filename, False)
     log.info("Saving the perturbations")
-    save_example_images(epsilons, perturbations, args.perturb_filename)
+    save_example_images(epsilons, perturbations, args.perturb_filename, True)
 
     # accuracy = test_attack(test_model, test_loader, 0, criterion)
     # log.info(f'Accuracy after CW L2 attack: {accuracy:.2f}')
