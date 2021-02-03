@@ -19,6 +19,7 @@ log.addHandler(ch)
 def cw(model: nn.Module, images, labels, c=10.0, kappa=0, max_iter=1000, learning_rate=0.01):
     images = images.clone().detach().cuda()
     labels = labels.clone().detach().cuda()
+    initial_outputs = model(images)
 
     # Define f-function
     def f(x):
@@ -60,5 +61,4 @@ def cw(model: nn.Module, images, labels, c=10.0, kappa=0, max_iter=1000, learnin
             prev = cost
 
     attack_images = 1 / 2 * (nn.Tanh()(w) + 1)
-
-    return attack_images
+    return attack_images.cuda(), initial_outputs
