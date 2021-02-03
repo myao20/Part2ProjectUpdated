@@ -91,8 +91,8 @@ def test_attack(test_model: nn.Module, test_loader: DataLoader, eps: float, crit
     perturbations = []
 
     for images, labels in test_loader:
-        adv_images, outputs = fgsm(test_model, images, labels, eps, criterion)
-        # adv_images = cw(test_model, images, labels).cuda()
+        adv_images, outputs = pgd(test_model, images, labels, eps, criterion)
+        # adv_images, outputs = cw(test_model, images, labels)
         _, init_preds = torch.max(outputs.data, 1)
         labels = labels.cuda()
         outputs = test_model(adv_images)
@@ -152,10 +152,14 @@ def save_example_images(epsilons: List[float], examples: List[List[Tuple[Any, An
     for i in range(len(epsilons)):
         for j in range(len(examples[i])):
             cnt += 1
-            plt.subplot(len(epsilons), len(examples[1]), cnt)
+            if len(examples) > 1:
+                plt.subplot(len(epsilons), len(examples[1]), cnt)
+            else:
+                plt.subplot(len(epsilons), len(examples[0]), cnt)
             plt.xticks([], [])
             plt.yticks([], [])
             if j == 0:
+                # TODO: edit below so max 4 decimal places or similar
                 plt.ylabel("Eps: {}".format(epsilons[i]), fontsize=14)
             orig_pred, new_pred, ex = examples[i][j]
             # option to magnify perturbations so they're perceptible
