@@ -172,8 +172,8 @@ def save_example_images(epsilons: List[float], examples: List[List[Tuple[Any, An
 
 
 def main():
-   # epsilons = [0, 0.2 / 255, 1 / 255, 2 / 255, 3 / 255, 4 / 255, 5 / 255]
-    epsilons = [0]
+    epsilons = [0, 0.2 / 255, 1 / 255, 2 / 255, 3 / 255, 4 / 255, 5 / 255]
+   # epsilons = [0]
     args = parser.parse_args()
     log.info(args.model_path)
 
@@ -197,7 +197,7 @@ def main():
     log.info("Saving the original images")
     save_example_images(epsilons, orig_examples, args.orig_filename, False)
     log.info("Saving the perturbations")
-    save_example_images(epsilons, perturbations, args.perturb_filename, False)
+    save_example_images(epsilons, perturbations, args.perturb_filename, True)
 
     # accuracy = test_attack(test_model, test_loader, 0, criterion)
     # log.info(f'Accuracy after CW L2 attack: {accuracy:.2f}')
