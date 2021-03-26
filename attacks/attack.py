@@ -91,8 +91,8 @@ def test_attack(test_model: nn.Module, test_loader: DataLoader, eps: float, crit
     perturbations = []
 
     for images, labels in test_loader:
-        adv_images, outputs = fgsm(test_model, images, labels, eps, criterion)
-        # adv_images, outputs = cw(test_model, images, labels)
+        #adv_images, outputs = fgsm(test_model, images, labels, eps, criterion)
+        adv_images, outputs = cw(test_model, images, labels)
         _, init_preds = torch.max(outputs.data, 1)
         labels = labels.cuda()
         outputs = test_model(adv_images)
@@ -172,8 +172,8 @@ def save_example_images(epsilons: List[float], examples: List[List[Tuple[Any, An
 
 
 def main():
-    epsilons = [0, 0.2 / 255, 1 / 255, 2 / 255, 3 / 255, 4 / 255, 5 / 255]
-   # epsilons = [0]
+   # epsilons = [0, 0.2 / 255, 1 / 255, 2 / 255, 3 / 255, 4 / 255, 5 / 255]
+    epsilons = [0]
     args = parser.parse_args()
     log.info(args.model_path)
 
@@ -190,17 +190,14 @@ def main():
     test_model.load_state_dict(torch.load(args.model_path))
     criterion = nn.BCEWithLogitsLoss()
     accuracies, examples, orig_examples, perturbations = run_attack(test_model, test_loader, epsilons, criterion)
-    # log.info("Plotting results")
-    # plot_results(accuracies, epsilons, args.filename)
+    #log.info("Plotting results")
+    #plot_results(accuracies, epsilons, args.filename)
     log.info("Saving some adversarial images")
     save_example_images(epsilons, examples, args.adv_filename, False)
     log.info("Saving the original images")
     save_example_images(epsilons, orig_examples, args.orig_filename, False)
     log.info("Saving the perturbations")
     save_example_images(epsilons, perturbations, args.perturb_filename, True)
-
-    # accuracy = test_attack(test_model, test_loader, 0, criterion)
-    # log.info(f'Accuracy after CW L2 attack: {accuracy:.2f}')
 
 
 if __name__ == "__main__":
