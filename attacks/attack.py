@@ -197,7 +197,7 @@ def main():
     log.info("Saving the original images")
     save_example_images(epsilons, orig_examples, args.orig_filename, False)
     log.info("Saving the perturbations")
-    save_example_images(epsilons, perturbations, args.perturb_filename, True)
+    save_example_images(epsilons, perturbations, args.perturb_filename, False)
 
 
 if __name__ == "__main__":
