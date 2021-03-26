@@ -25,9 +25,10 @@ def cw(model: nn.Module, images, labels, c=10.0, kappa=0, max_iter=1000, learnin
     def f(x):
         outputs = model(x)
         # tensor of one-hot labels
-        # TODO: actually same as y in other attacks - either change y or the below
-        # TODO: check with changing y first get same result
-        one_hot_labels = torch.eye(len(outputs[0]))[labels].cuda()
+        # one_hot_labels = torch.eye(len(outputs[0]))[labels].cuda()
+        y = torch.zeros(list(outputs.size())[0], 2)
+        y[range(y.shape[0]), labels] = 1
+        one_hot_labels = y.cuda()
         i, _ = torch.max((1 - one_hot_labels) * outputs, dim=1)
         # masked_select returns a new 1-D tensor which indexes the input tensor according
         # to the boolean mask (one_hot_labels.bool()) which is a BoolTensor.
