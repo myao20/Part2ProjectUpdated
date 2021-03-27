@@ -35,8 +35,8 @@ def cw_l_inf(model: nn.Module, images, labels, eps, alpha=2 / 255, max_iter=1000
 
         loss = f(outputs, labels).sum()
 
-        if step % 50 == 0:
-            log.debug(f'Loss is {loss} after {step} iterations')
+        if step == 0:
+            log.debug(f'Loss: {loss}')
 
         loss.backward()
 
