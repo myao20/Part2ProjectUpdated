@@ -33,14 +33,13 @@ def cw_l_inf(model: nn.Module, images, labels, eps, alpha=2 / 255, max_iter=1000
         if step == 0:
             initial_outputs = outputs
 
-        loss = f(outputs, labels).sum()
+        loss = -f(outputs, labels).sum()
 
         if step == 0:
             log.debug(f'Loss: {loss}')
 
         loss.backward()
 
-        # TODO: can try experimenting with changing num iterations
         adv_images = adv_images.detach() + alpha * adv_images.grad.sign()
         eta = torch.clamp(adv_images - images, min=-eps, max=eps)
         adv_images = torch.clamp(images + eta, min=-1, max=1).detach()
