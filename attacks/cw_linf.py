@@ -15,24 +15,25 @@ log.addHandler(fh)
 log.addHandler(ch)
 
 
-def cw_l_inf(model: nn.Module, images, labels, eps, alpha=2 / 255, max_iter=1000, kappa=0):
+def cw_l_inf(model: nn.Module, images, labels, eps, alpha=2 / 255, iters=40, kappa=0):
     images = images.clone().detach().cuda()
     labels = labels.clone().detach().cuda()
-    adv_images = images.clone().detach()
+    perturbed_images = images.clone().detach()
 
     def f(outputs, labels):
         one_hot_labels = torch.eye(len(outputs[0]))[labels].cuda()
 
         i, _ = torch.max((1 - one_hot_labels) * outputs, dim=1)
         j = torch.masked_select(outputs, one_hot_labels.bool())
-        return torch.clamp(i - j, min=-kappa)
+        return torch.clamp(j - i, min=-kappa)
 
-    for step in range(max_iter):
-        adv_images.requires_grad = True
-        outputs = model(adv_images)
+    for step in range(iters):
+        perturbed_images.requires_grad = True
+        outputs = model(perturbed_images)
         if step == 0:
             initial_outputs = outputs
 
+        model.zero_grad()
         loss = -f(outputs, labels).sum()
 
         if step == 0:
@@ -40,8 +41,8 @@ def cw_l_inf(model: nn.Module, images, labels, eps, alpha=2 / 255, max_iter=1000
 
         loss.backward()
 
-        adv_images = adv_images.detach() + alpha * adv_images.grad.sign()
-        eta = torch.clamp(adv_images - images, min=-eps, max=eps)
-        adv_images = torch.clamp(images + eta, min=-1, max=1).detach()
+        perturbed_images = perturbed_images.detach() + alpha * perturbed_images.grad.sign()
+        eta = torch.clamp(perturbed_images - images, min=-eps, max=eps)
+        images = torch.clamp(images + eta, min=-1, max=1).detach()
 
-    return adv_images.cuda(), initial_outputs
+    return images.cuda(), initial_outputs
