@@ -29,10 +29,8 @@ def cw(model: nn.Module, images, labels, c=10.0, kappa=0, max_iter=1000, learnin
         y = torch.zeros(list(outputs.size())[0], 2)
         y[range(y.shape[0]), labels] = 1
         one_hot_labels = y.cuda()
-        i, _ = torch.max((1 - one_hot_labels) * outputs, dim=1)
-        # masked_select returns a new 1-D tensor which indexes the input tensor according
-        # to the boolean mask (one_hot_labels.bool()) which is a BoolTensor.
-        j = torch.masked_select(outputs, one_hot_labels.bool())
+        i, _ = torch.max((1 - one_hot_labels) * outputs, dim=1)  # wrong logits
+        j = torch.masked_select(outputs, one_hot_labels.bool())  # correct logits
 
         return torch.clamp(j - i, min=-kappa)
     # tensor of zeroes same size as images
