@@ -1,17 +1,28 @@
 import logging
 import os
 import time
-
+import numpy as np
 import torch
 from torch import nn
 from typing import Tuple
 
+from attacks.fgsm import fgsm
 from utils.utils import save_model, write_list_to_file
 
 import yaml
 from torch.utils.data import DataLoader
 
 log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
+fh = logging.FileHandler('../logs/adv_train.log')
+fh.setLevel(logging.INFO)
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+ch.setFormatter(formatter)
+log.addHandler(fh)
+log.addHandler(ch)
 
 CONFIG_PATH = "../configs/"
 
@@ -51,13 +62,13 @@ class Trainer:
         self.train_loss, self.train_accuracy = [], []
         self.val_loss, self.val_accuracy = [], []
 
-    def train_model(self) -> None:
+    def train_model(self, adv_train=False) -> None:
         start = time.time()
         for epoch in range(self.num_epochs):
             print("Epoch {}/{}".format(epoch+1, self.num_epochs))
 
             # Perform training and validation iterations
-            train_epoch_loss, train_epoch_accuracy = self.train_iteration()
+            train_epoch_loss, train_epoch_accuracy = self.train_iteration(adv_train)
             val_epoch_loss, val_epoch_accuracy = self.validate()
 
             # Log metrics
@@ -66,9 +77,9 @@ class Trainer:
             self.val_loss.append(val_epoch_loss)
             self.val_accuracy.append(val_epoch_accuracy)
         end = time.time()
-        log.info(f"{(end - start) / 60:.3f} minutes")
+        log.info(f"Training time: {(end - start) / 60:.3f} minutes")
 
-    def train_iteration(self) -> Tuple[float, float]:
+    def train_iteration(self, adv_train: bool) -> Tuple[float, float]:
         print("Training ...")
         self.model.train()
         train_running_loss = 0.0
@@ -77,8 +88,21 @@ class Trainer:
         dataset_length = len(self.train_loader.dataset)
         for data in self.train_loader:
             data, target = data[0].cuda(), data[1].cuda()
+
+            if adv_train:
+                np.random.seed(config["seed"])
+                rand_num = np.random.uniform(size=1)[0]
+                log.info(f'Random number: {rand_num}')
+                if rand_num <= config["training"]["prop_adv_train"]:
+                    adv_images, _ = fgsm(self.model, data, target, config["training"]["epsilon"], self.criterion)
+                    outputs = self.model(adv_images)
+                else:
+                    outputs = self.model(data)
+            else:
+                outputs = self.model(data)
+
             self.optimizer.zero_grad()
-            outputs = self.model(data)
+            #outputs = self.model(data)
             y = torch.zeros(list(outputs.size())[0], 2)
             y[range(y.shape[0]), target] = 1
             y = y.cuda()
@@ -120,10 +144,10 @@ class Trainer:
             return val_loss, val_accuracy
 
     def write_logs_to_file(self) -> None:
-        write_list_to_file(self.train_loss, "trainloss6.txt")
-        write_list_to_file(self.train_accuracy, "trainacc6.txt")
-        write_list_to_file(self.val_loss, "valloss6.txt")
-        write_list_to_file(self.val_accuracy, "valacc6.txt")
+        write_list_to_file(self.train_loss, "advtrainlosstest.txt")
+        write_list_to_file(self.train_accuracy, "advtrainacctest.txt")
+        write_list_to_file(self.val_loss, "advvallosstest.txt")
+        write_list_to_file(self.val_accuracy, "advvalacctest.txt")
 
     def save_model_to_file(self, filename: str) -> None:
         save_model(self.model, filename)

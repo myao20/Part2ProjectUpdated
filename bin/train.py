@@ -68,13 +68,13 @@ def main():
 
     # train
     log.info("Starting to train the model")
-    trainer.train_model()
+    trainer.train_model(adv_train=config["training"]["adv_train"])
 
     # Write logs
     log.info("Writing results to file")
     trainer.write_logs_to_file()
     log.info("Saving model")
-    trainer.save_model_to_file("models/model6.pth")
+    trainer.save_model_to_file("models/adv_model_test.pth")
 
 
 if __name__ == "__main__":
