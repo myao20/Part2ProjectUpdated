@@ -174,7 +174,6 @@ def save_example_images(epsilons: List[float], examples: List[List[Tuple[Any, An
 
 def main():
     epsilons = [0, 0.2 / 255, 1 / 255, 2 / 255, 3 / 255, 4 / 255, 5 / 255]
-   # epsilons = [0]
     args = parser.parse_args()
     log.info(args.model_path)
 
