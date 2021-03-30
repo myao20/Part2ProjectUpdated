@@ -77,24 +77,28 @@ class Trainer:
             self.val_loss.append(val_epoch_loss)
             self.val_accuracy.append(val_epoch_accuracy)
         end = time.time()
-        log.info(f"Training time: {(end - start) / 60:.3f} minutes")
+        log.info(f"Training time: {(end - start) / 60:.3f} minutes for {self.num_epochs} epochs")
 
     def train_iteration(self, adv_train: bool) -> Tuple[float, float]:
         print("Training ...")
         self.model.train()
         train_running_loss = 0.0
         train_running_correct = 0
+        num_attacked = 0
 
         dataset_length = len(self.train_loader.dataset)
         for data in self.train_loader:
             data, target = data[0].cuda(), data[1].cuda()
+            num_images = len(data)
+            log.debug(f"Number of images: {num_images}")
 
             if adv_train:
-                np.random.seed(config["seed"])
+                #np.random.seed(config["seed"])
                 rand_num = np.random.uniform(size=1)[0]
                 log.info(f'Random number: {rand_num}')
                 if rand_num <= config["training"]["prop_adv_train"]:
                     adv_images, _ = fgsm(self.model, data, target, config["training"]["epsilon"], self.criterion)
+                    num_attacked = num_attacked + num_images
                     outputs = self.model(adv_images)
                 else:
                     outputs = self.model(data)
@@ -113,6 +117,8 @@ class Trainer:
             loss.backward()
             self.optimizer.step()
 
+        proportion_attacked = num_attacked / dataset_length
+        log.info(f"Proportion of images attacked: {proportion_attacked}")
         train_loss = train_running_loss / dataset_length
         train_accuracy = 100.0 * train_running_correct / dataset_length
         print(f"Train Loss: {train_loss:.4f}, Train Acc: {train_accuracy:.2f}")
@@ -144,10 +150,10 @@ class Trainer:
             return val_loss, val_accuracy
 
     def write_logs_to_file(self) -> None:
-        write_list_to_file(self.train_loss, "advtrainlosstest.txt")
-        write_list_to_file(self.train_accuracy, "advtrainacctest.txt")
-        write_list_to_file(self.val_loss, "advvallosstest.txt")
-        write_list_to_file(self.val_accuracy, "advvalacctest.txt")
+        write_list_to_file(self.train_loss, "advtrainlosstest1.txt")
+        write_list_to_file(self.train_accuracy, "advtrainacctest1.txt")
+        write_list_to_file(self.val_loss, "advvallosstest1.txt")
+        write_list_to_file(self.val_accuracy, "advvalacctest1.txt")
 
     def save_model_to_file(self, filename: str) -> None:
         save_model(self.model, filename)
