@@ -90,12 +90,10 @@ class Trainer:
         for data in self.train_loader:
             data, target = data[0].cuda(), data[1].cuda()
             num_images = len(data)
-            log.debug(f"Number of images: {num_images}")
 
             if adv_train:
-                #np.random.seed(config["seed"])
                 rand_num = np.random.uniform(size=1)[0]
-                log.info(f'Random number: {rand_num}')
+                log.debug(f'Random number: {rand_num}')
                 if rand_num <= config["training"]["prop_adv_train"]:
                     adv_images, _ = fgsm(self.model, data, target, config["training"]["epsilon"], self.criterion)
                     num_attacked = num_attacked + num_images
@@ -150,10 +148,10 @@ class Trainer:
             return val_loss, val_accuracy
 
     def write_logs_to_file(self) -> None:
-        write_list_to_file(self.train_loss, "advtrainlosstest1.txt")
-        write_list_to_file(self.train_accuracy, "advtrainacctest1.txt")
-        write_list_to_file(self.val_loss, "advvallosstest1.txt")
-        write_list_to_file(self.val_accuracy, "advvalacctest1.txt")
+        write_list_to_file(self.train_loss, "advtrainlossfgsm.txt")
+        write_list_to_file(self.train_accuracy, "advtrainaccfgsm.txt")
+        write_list_to_file(self.val_loss, "advvallossfgsm.txt")
+        write_list_to_file(self.val_accuracy, "advvalaccfgsm.txt")
 
     def save_model_to_file(self, filename: str) -> None:
         save_model(self.model, filename)
