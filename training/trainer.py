@@ -119,7 +119,7 @@ class Trainer:
         log.info(f"Proportion of images attacked: {proportion_attacked}")
         train_loss = train_running_loss / dataset_length
         train_accuracy = 100.0 * train_running_correct / dataset_length
-        print(f"Train Loss: {train_loss:.4f}, Train Acc: {train_accuracy:.2f}")
+        log.info(f"Train Loss: {train_loss:.4f}, Train Acc: {train_accuracy:.2f}")
 
         return train_loss, train_accuracy
 
@@ -143,7 +143,7 @@ class Trainer:
 
             val_loss = val_running_loss / dataset_length
             val_accuracy = 100.0 * val_running_correct / dataset_length
-            print(f"Val Loss: {val_loss:.4f}, Val Acc: {val_accuracy:.2f}")
+            log.info(f"Val Loss: {val_loss:.4f}, Val Acc: {val_accuracy:.2f}")
 
             return val_loss, val_accuracy
 
