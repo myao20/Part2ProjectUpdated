@@ -93,7 +93,6 @@ class Trainer:
 
             if adv_train:
                 rand_num = np.random.uniform(size=1)[0]
-                log.debug(f'Random number: {rand_num}')
                 if rand_num <= config["training"]["prop_adv_train"]:
                     adv_images, _ = fgsm(self.model, data, target, config["training"]["epsilon"], self.criterion)
                     num_attacked = num_attacked + num_images
