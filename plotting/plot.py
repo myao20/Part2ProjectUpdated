@@ -51,6 +51,16 @@ parser.add_argument(
     help="Path to validation loss file",
     required=True,
 )
+parser.add_argument(
+    "--acc-filename",
+    help="Name of accuracy plot",
+    required=True,
+)
+parser.add_argument(
+    "--loss-filename",
+    help="Name of loss plot",
+    required=True,
+)
 
 
 def lists_from_files(path_to_file1: str, path_to_file2: str) -> Tuple[List[float], List[float]]:
@@ -83,22 +93,24 @@ def make_loss_plots(train_loss: List[float], val_loss: List[float], path_name: s
     plt.savefig(os.path.join(config["output_path"], path_name))
 
 
-def plot_accuracy(train_accuracy_path: str, val_accuracy_path: str) -> None:
+def plot_accuracy(train_accuracy_path: str, val_accuracy_path: str, acc_filename: str) -> None:
     train_accuracy, val_accuracy = lists_from_files(train_accuracy_path, val_accuracy_path)
-    make_accuracy_plots(train_accuracy, val_accuracy, "plots/acc6.png")
+    # make_accuracy_plots(train_accuracy, val_accuracy, "plots/advfgsm_acc.png")
+    make_accuracy_plots(train_accuracy, val_accuracy, acc_filename)
 
 
-def plot_loss(train_loss_path: str, val_loss_path: str) -> None:
+def plot_loss(train_loss_path: str, val_loss_path: str, loss_filename: str) -> None:
     train_loss, val_loss = lists_from_files(train_loss_path, val_loss_path)
-    make_loss_plots(train_loss, val_loss, "plots/loss6.png")
+    # make_loss_plots(train_loss, val_loss, "plots/advfgsm_loss.png")
+    make_loss_plots(train_loss, val_loss, loss_filename)
 
 
 def main():
     args = parser.parse_args()
     log.info("Making accuracy plots")
-    plot_accuracy(args.train_acc, args.val_acc)
+    plot_accuracy(args.train_acc, args.val_acc, args.acc_filename)
     log.info("Making loss plots")
-    plot_loss(args.train_loss, args.val_loss)
+    plot_loss(args.train_loss, args.val_loss, args.loss_filename)
 
 
 if __name__ == "__main__":
