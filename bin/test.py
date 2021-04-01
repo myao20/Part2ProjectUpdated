@@ -60,7 +60,7 @@ def get_predictions(path_to_model: str, test_loader: DataLoader) -> Tuple[List[i
             test_running_correct += (preds == target).sum().item()
 
         test_accuracy = 100. * test_running_correct / dataset_length
-        print(f'Test Acc: {test_accuracy:.2f}')
+        log.info(f'Test Acc: {test_accuracy:.2f}')
 
         return [i.item() for i in y_true], [i.item() for i in y_pred]
 
