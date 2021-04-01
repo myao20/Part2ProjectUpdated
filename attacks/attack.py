@@ -71,6 +71,13 @@ parser.add_argument(
     help="Name of perturbations file",
     required=False,
 )
+parser.add_argument(
+    "-a",
+    "--attack",
+    default="fgsm",
+    help="Attack to be applied - choose from 'fgsm', 'pgd', 'cwl2', 'cwli'",
+    required=False,
+)
 
 
 def get_adv_indices(num: int, init_pre, new_pre, labels) -> np.ndarray:
@@ -82,7 +89,7 @@ def get_adv_indices(num: int, init_pre, new_pre, labels) -> np.ndarray:
     return adv_indices[:max(5, num)]
 
 
-def test_attack(test_model: nn.Module, test_loader: DataLoader, eps: float, criterion) -> Tuple[
+def test_attack(test_model: nn.Module, test_loader: DataLoader, eps: float, criterion, attack_name: str) -> Tuple[
                 float, List[Tuple[Any, Any, Any]], List[Tuple[Any, Any, Any]], List[Tuple[Any, Any, Any]]]:
     test_model.eval()
     correct = 0
@@ -92,9 +99,15 @@ def test_attack(test_model: nn.Module, test_loader: DataLoader, eps: float, crit
     perturbations = []
 
     for images, labels in test_loader:
-        adv_images, outputs = pgd(test_model, images, labels, eps, criterion)
-        #adv_images, outputs = cw(test_model, images, labels)
-        # adv_images, outputs = cw_l_inf(test_model, images, labels, eps)
+        if attack_name == 'fgsm':
+            adv_images, outputs = fgsm(test_model, images, labels, eps, criterion)
+        elif attack_name == 'pgd':
+            adv_images, outputs = pgd(test_model, images, labels, eps, criterion)
+        elif attack_name == 'cwl2':
+            adv_images, outputs = cw(test_model, images, labels)
+        else:  # cw l-inf attack
+            adv_images, outputs = cw_l_inf(test_model, images, labels, eps)
+
         _, init_preds = torch.max(outputs.data, 1)
         labels = labels.cuda()
         outputs = test_model(adv_images)
@@ -117,9 +130,9 @@ def test_attack(test_model: nn.Module, test_loader: DataLoader, eps: float, crit
     return accuracy, adv_examples, orig_examples, perturbations
 
 
-def run_attack(test_model: nn.Module, test_loader: DataLoader, epsilons: List[float], criterion) -> Tuple[
-                List[float], List[List[Tuple[Any, Any, Any]]], List[List[Tuple[Any, Any, Any]]],
-                List[List[Tuple[Any, Any, Any]]]]:
+def run_attack(test_model: nn.Module, test_loader: DataLoader, epsilons: List[float], criterion, attack_name: str) -> \
+        Tuple[List[float], List[List[Tuple[Any, Any, Any]]], List[List[Tuple[Any, Any, Any]]],
+              List[List[Tuple[Any, Any, Any]]]]:
     accuracies = []
     examples = []
     orig_examples = []
@@ -127,7 +140,7 @@ def run_attack(test_model: nn.Module, test_loader: DataLoader, epsilons: List[fl
 
     for eps in epsilons:
         log.info(f'Epsilon: {eps:.4f}')
-        acc, ex, orig, perturbation = test_attack(test_model, test_loader, eps, criterion)
+        acc, ex, orig, perturbation = test_attack(test_model, test_loader, eps, criterion, attack_name)
         log.info(f'Accuracy: {acc:.2f}')
         accuracies.append(acc)
         examples.append(ex)
@@ -189,7 +202,7 @@ def main():
 
     test_model.load_state_dict(torch.load(args.model_path))
     criterion = nn.BCEWithLogitsLoss()
-    accuracies, examples, orig_examples, perturbations = run_attack(test_model, test_loader, epsilons, criterion)
+    accuracies, examples, orig_examples, perturbations = run_attack(test_model, test_loader, epsilons, criterion, args.attack)
     log.info("Plotting results")
     plot_results(accuracies, epsilons, args.filename)
     log.info("Saving some adversarial images")
