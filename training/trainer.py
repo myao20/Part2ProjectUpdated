@@ -7,6 +7,7 @@ from torch import nn
 from typing import Tuple
 
 from attacks.fgsm import fgsm
+from attacks.pgd import pgd
 from utils.utils import save_model, write_list_to_file
 
 import yaml
@@ -94,7 +95,7 @@ class Trainer:
             if adv_train:
                 rand_num = np.random.uniform(size=1)[0]
                 if rand_num <= config["training"]["prop_adv_train"]:
-                    adv_images, _ = fgsm(self.model, data, target, config["training"]["epsilon"], self.criterion)
+                    adv_images, _ = pgd(self.model, data, target, config["training"]["epsilon"], self.criterion)
                     num_attacked = num_attacked + num_images
                     outputs = self.model(adv_images)
                 else:
