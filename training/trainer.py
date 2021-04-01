@@ -148,10 +148,10 @@ class Trainer:
             return val_loss, val_accuracy
 
     def write_logs_to_file(self) -> None:
-        write_list_to_file(self.train_loss, "advtrainlossfgsm.txt")
-        write_list_to_file(self.train_accuracy, "advtrainaccfgsm.txt")
-        write_list_to_file(self.val_loss, "advvallossfgsm.txt")
-        write_list_to_file(self.val_accuracy, "advvalaccfgsm.txt")
+        write_list_to_file(self.train_loss, "advtrainlosspgd.txt") # change shows on other changelist
+        write_list_to_file(self.train_accuracy, "advtrainaccpgd.txt")
+        write_list_to_file(self.val_loss, "advvallosspgd.txt")
+        write_list_to_file(self.val_accuracy, "advvalaccpgd.txt")
 
     def save_model_to_file(self, filename: str) -> None:
         save_model(self.model, filename)
