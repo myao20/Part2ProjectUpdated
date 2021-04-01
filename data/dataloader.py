@@ -29,6 +29,8 @@ config = load_config("config.yaml")
 
 def create_data_loaders(csv_name: str) -> Tuple[DataLoader, DataLoader, DataLoader]:
     x_train, y_train, x_val, y_val, x_test, y_test = split_data(csv_name)
+    log.debug(x_train[:5])
+    log.debug(x_test[:5])
     log.debug(len(x_train))
     log.debug(len(x_val))
     log.debug(len(x_test))
