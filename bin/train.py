@@ -31,7 +31,43 @@ def load_config(config_name: str):
     return my_config
 
 
-# launch a run with: python bin/train.py -c $PATH_TO_CONFIG
+config = load_config("config.yaml")
+
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "-a",
+    "--attack",
+    default="fgsm",
+    help="Attack to be applied - choose from 'fgsm', 'pgd', 'cwl2', 'cwli'",
+    required=False,
+)
+parser.add_argument(
+    "--train-acc",
+    help="Name of file for writing train accuracy logs to",
+    required=True,
+)
+parser.add_argument(
+    "--val-acc",
+    help="Name of file for writing val accuracy logs to",
+    required=True,
+)
+parser.add_argument(
+    "--train-loss",
+    help="Name of file for writing train loss logs to",
+    required=True,
+)
+parser.add_argument(
+    "--val-loss",
+    help="Name of file for writing val accuracy logs to",
+    required=True,
+)
+parser.add_argument(
+    "-p",
+    "--model-path",
+    help="Path to save model to",
+    required=True,
+)
+
 
 def main():
     # Create Data
@@ -68,29 +104,32 @@ def main():
 
     # train
     log.info("Starting to train the model")
-    trainer.train_model(adv_train=config["training"]["adv_train"])
+    args = parser.parse_args()
+    log.info(f'Attack being applied is: {args.attack}')
+    trainer.train_model(adv_train=config["training"]["adv_train"], attack=args.attack)
 
     # Write logs
     log.info("Writing results to file")
-    trainer.write_logs_to_file()
+    trainer.write_logs_to_file(args.train_loss, args.train_acc, args.val_loss, args.val_acc)
     log.info("Saving model")
-    trainer.save_model_to_file("models/adv_model_fgsm1.pth")
+    # trainer.save_model_to_file("models/adv_model_fgsm1.pth")
+    trainer.save_model_to_file(args.model_path)
 
 
 if __name__ == "__main__":
-    # Parse command line args
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-c",
-        "--config",
-        default="../configs/",
-        help="Path to project config file",
-        required=False,
-    )
-    args = parser.parse_args()
-
-    parser.parse_args()
-    config = load_config("config.yaml")
+    # # Parse command line args
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument(
+    #     "-c",
+    #     "--config",
+    #     default="../configs/",
+    #     help="Path to project config file",
+    #     required=False,
+    # )
+    # args = parser.parse_args()
+    #
+    # parser.parse_args()
+    # config = load_config("config.yaml")
 
     main()
 

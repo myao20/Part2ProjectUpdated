@@ -6,6 +6,8 @@ import torch
 from torch import nn
 from typing import Tuple
 
+from attacks.cw import cw
+from attacks.cw_linf import cw_l_inf
 from attacks.fgsm import fgsm
 from attacks.pgd import pgd
 from utils.utils import save_model, write_list_to_file
@@ -63,13 +65,13 @@ class Trainer:
         self.train_loss, self.train_accuracy = [], []
         self.val_loss, self.val_accuracy = [], []
 
-    def train_model(self, adv_train=False) -> None:
+    def train_model(self, adv_train=False, attack='fgsm') -> None:
         start = time.time()
         for epoch in range(self.num_epochs):
             print("Epoch {}/{}".format(epoch+1, self.num_epochs))
 
             # Perform training and validation iterations
-            train_epoch_loss, train_epoch_accuracy = self.train_iteration(adv_train)
+            train_epoch_loss, train_epoch_accuracy = self.train_iteration(adv_train, attack)
             val_epoch_loss, val_epoch_accuracy = self.validate()
 
             # Log metrics
@@ -80,7 +82,7 @@ class Trainer:
         end = time.time()
         log.info(f"Training time: {(end - start) / 60:.3f} minutes for {self.num_epochs} epochs")
 
-    def train_iteration(self, adv_train: bool) -> Tuple[float, float]:
+    def train_iteration(self, adv_train: bool, attack='fgsm') -> Tuple[float, float]:
         print("Training ...")
         self.model.train()
         train_running_loss = 0.0
@@ -95,7 +97,16 @@ class Trainer:
             if adv_train:
                 rand_num = np.random.uniform(size=1)[0]
                 if rand_num <= config["training"]["prop_adv_train"]:
-                    adv_images, _ = pgd(self.model, data, target, config["training"]["epsilon"], self.criterion)
+                    # TODO: try an fgsm with 0.5 as proportion as well. both 100 epochs
+                    if attack == 'fgsm':
+                        adv_images, _ = fgsm(self.model, data, target, config["training"]["epsilon"], self.criterion)
+                    elif attack == 'pgd':
+                        adv_images, _ = pgd(self.model, data, target, config["training"]["epsilon"], self.criterion)
+                    elif attack == 'cwl2':
+                        adv_images, _ = cw(self.model, data, target)
+                    else:  # cw l-inf attack
+                        adv_images, _ = cw_l_inf(self.model, data, target, config["training"]["epsilon"])
+
                     num_attacked = num_attacked + num_images
                     outputs = self.model(adv_images)
                 else:
@@ -104,7 +115,6 @@ class Trainer:
                 outputs = self.model(data)
 
             self.optimizer.zero_grad()
-            #outputs = self.model(data)
             y = torch.zeros(list(outputs.size())[0], 2)
             y[range(y.shape[0]), target] = 1
             y = y.cuda()
@@ -147,11 +157,12 @@ class Trainer:
 
             return val_loss, val_accuracy
 
-    def write_logs_to_file(self) -> None:
-        write_list_to_file(self.train_loss, "advtrainlossfgsm1.txt")
-        write_list_to_file(self.train_accuracy, "advtrainaccfgsm1.txt")
-        write_list_to_file(self.val_loss, "advvallossfgsm1.txt")
-        write_list_to_file(self.val_accuracy, "advvalaccfgsm1.txt")
+    def write_logs_to_file(self, train_loss_filename: str, train_acc_filename: str, val_loss_filename: str,
+                           val_acc_filename: str) -> None:
+        write_list_to_file(self.train_loss, train_loss_filename)
+        write_list_to_file(self.train_accuracy, train_acc_filename)
+        write_list_to_file(self.val_loss, val_loss_filename)
+        write_list_to_file(self.val_accuracy, val_acc_filename)
 
     def save_model_to_file(self, filename: str) -> None:
         save_model(self.model, filename)
