@@ -78,6 +78,13 @@ parser.add_argument(
     help="Attack to be applied - choose from 'fgsm', 'pgd', 'cwl2', 'cwli'",
     required=False,
 )
+parser.add_argument(
+    "-mp",
+    "--magnify-perturbations",
+    default=True,
+    help="Option to plot the magnified perturbations",
+    required=False,
+)
 
 
 def get_adv_indices(num: int, init_pre, new_pre, labels) -> np.ndarray:
@@ -186,6 +193,7 @@ def save_example_images(epsilons: List[float], examples: List[List[Tuple[Any, An
 
 
 def main():
+    # TODO: move this to config.yaml
     epsilons = [0, 0.2 / 255, 1 / 255, 2 / 255, 3 / 255, 4 / 255, 5 / 255]
     args = parser.parse_args()
     log.info(args.model_path)
@@ -202,16 +210,22 @@ def main():
 
     test_model.load_state_dict(torch.load(args.model_path))
     criterion = nn.BCEWithLogitsLoss()
-    accuracies, examples, orig_examples, perturbations = run_attack(test_model, test_loader, epsilons, criterion, args.attack)
-    log.info("Plotting results")
-    plot_results(accuracies, epsilons, args.filename)
-    log.info("Saving some adversarial images")
-    save_example_images(epsilons, examples, args.adv_filename, False)
-    log.info("Saving the original images")
-    save_example_images(epsilons, orig_examples, args.orig_filename, False)
-    log.info("Saving the perturbations")
-    # TODO: add magnify perturbations as argument to command line
-    save_example_images(epsilons, perturbations, args.perturb_filename, True)
+    accuracies, examples, orig_examples, perturbations = run_attack(
+        test_model, test_loader, epsilons, criterion, args.attack
+    )
+
+    if args.attack != 'cwl2':
+        log.info("Plotting results")
+        plot_results(accuracies, epsilons, args.filename)
+    if args.adv_filename is not None:
+        log.info("Saving some adversarial images")
+        save_example_images(epsilons, examples, args.adv_filename, False)
+    if args.orig_filename is not None:
+        log.info("Saving the original images")
+        save_example_images(epsilons, orig_examples, args.orig_filename, False)
+    if args.perturb_filename is not None:
+        log.info("Saving the perturbations")
+        save_example_images(epsilons, perturbations, args.perturb_filename, args.magnify_perturbations)
 
 
 if __name__ == "__main__":
