@@ -6,7 +6,7 @@ import torch
 from torch import nn
 from typing import Tuple
 
-from attacks.cw import cw
+from attacks.cw_l2 import cw_l2
 from attacks.cw_linf import cw_l_inf
 from attacks.fgsm import fgsm
 from attacks.pgd import pgd
@@ -97,13 +97,13 @@ class Trainer:
             if adv_train:
                 rand_num = np.random.uniform(size=1)[0]
                 if rand_num <= config["training"]["prop_adv_train"]:
-                    # TODO: try an fgsm with 0.5 as proportion as well. both 100 epochs
+                    # TODO: try cwl-inf with 0.5 as proportion, 100 epochs
                     if attack == 'fgsm':
                         adv_images, _ = fgsm(self.model, data, target, config["training"]["epsilon"], self.criterion)
                     elif attack == 'pgd':
                         adv_images, _ = pgd(self.model, data, target, config["training"]["epsilon"], self.criterion)
                     elif attack == 'cwl2':
-                        adv_images, _ = cw(self.model, data, target)
+                        adv_images, _ = cw_l2(self.model, data, target)
                     else:  # cw l-inf attack
                         adv_images, _ = cw_l_inf(self.model, data, target, config["training"]["epsilon"])
 

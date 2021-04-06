@@ -5,7 +5,7 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 
-from attacks.cw import cw
+from attacks.cw_l2 import cw_l2
 from attacks.cw_linf import cw_l_inf
 from attacks.fgsm import fgsm
 from typing import List, Any, Tuple
@@ -104,7 +104,7 @@ def test_attack(test_model: nn.Module, test_loader: DataLoader, eps: float, crit
         elif attack_name == 'pgd':
             adv_images, outputs = pgd(test_model, images, labels, eps, criterion)
         elif attack_name == 'cwl2':
-            adv_images, outputs = cw(test_model, images, labels)
+            adv_images, outputs = cw_l2(test_model, images, labels)
         else:  # cw l-inf attack
             adv_images, outputs = cw_l_inf(test_model, images, labels, eps)
 
@@ -210,6 +210,7 @@ def main():
     log.info("Saving the original images")
     save_example_images(epsilons, orig_examples, args.orig_filename, False)
     log.info("Saving the perturbations")
+    # TODO: add magnify perturbations as argument to command line
     save_example_images(epsilons, perturbations, args.perturb_filename, True)
 
 

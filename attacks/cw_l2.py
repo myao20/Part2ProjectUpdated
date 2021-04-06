@@ -16,7 +16,7 @@ log.addHandler(fh)
 log.addHandler(ch)
 
 
-def cw(model: nn.Module, images, labels, c=10.0, kappa=0, max_iter=1000, learning_rate=0.01):
+def cw_l2(model: nn.Module, images, labels, c=10.0, kappa=0, max_iter=1000, learning_rate=0.01):
     images = images.clone().detach().cuda()
     labels = labels.clone().detach().cuda()
     initial_outputs = model(images)
@@ -43,7 +43,8 @@ def cw(model: nn.Module, images, labels, c=10.0, kappa=0, max_iter=1000, learnin
     for step in range(max_iter):
         if step % 50 == 0:
             log.debug(f'Step {step} out of {max_iter}')
-        a = 1 / 2 * (nn.Tanh()(w) + 1)
+        # a = 1 / 2 * (nn.Tanh()(w) + 1) # TODO: try just using tanh()(w) by itself since range -1, 1
+        a = nn.Tanh()(w)
 
         loss1 = nn.MSELoss(reduction='sum')(a, images)
         loss2 = torch.sum(c * f(a))
@@ -61,5 +62,6 @@ def cw(model: nn.Module, images, labels, c=10.0, kappa=0, max_iter=1000, learnin
                 return a
             prev = cost
 
-    attack_images = 1 / 2 * (nn.Tanh()(w) + 1)
+    # attack_images = 1 / 2 * (nn.Tanh()(w) + 1)  # TODO: try just using tanh()(w) by itself since range -1, 1
+    attack_images = nn.Tanh()(w)
     return attack_images.cuda(), initial_outputs
