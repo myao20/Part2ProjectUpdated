@@ -62,5 +62,5 @@ def cw_l2(model: nn.Module, images, labels, c=10.0, kappa=0, max_iter=1000, lear
                 return a
             prev = cost
 
-    attack_images = nn.Tanh()(w)
+    attack_images = nn.Tanh()(w).detach()  # TODO: test with c = 1.0, 0.1 with .detach() and  maybe c=10.0
     return attack_images.cuda(), initial_outputs
