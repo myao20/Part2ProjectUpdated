@@ -148,6 +148,7 @@ def run_attack(test_model: nn.Module, test_loader: DataLoader, epsilons: List[fl
     for eps in epsilons:
         log.info(f'Epsilon: {eps:.4f}')
         acc, ex, orig, perturbation = test_attack(test_model, test_loader, eps, criterion, attack_name)
+        log.info(f'Attack: {attack_name}')
         log.info(f'Accuracy: {acc:.2f}')
         accuracies.append(acc)
         examples.append(ex)
@@ -193,9 +194,16 @@ def save_example_images(epsilons: List[float], examples: List[List[Tuple[Any, An
 
 
 def main():
-    # TODO: move this to config.yaml
-    epsilons = [0, 0.2 / 255, 1 / 255, 2 / 255, 3 / 255, 4 / 255, 5 / 255]
+    # TODO: move this to config.yaml, need to change to just [0] when doing cwl2
+    # epsilons = [0, 0.2 / 255, 1 / 255, 2 / 255, 3 / 255, 4 / 255, 5 / 255]
+    # epsilons = config["attacks"]["epsilons"]
+    # epsilons = [0]
     args = parser.parse_args()
+    if args.attack != 'cwl2':
+        epsilons = [0, 0.2 / 255, 1 / 255, 2 / 255, 3 / 255, 4 / 255, 5 / 255]
+    else:
+        epsilons = [0]
+
     log.info(args.model_path)
 
     train_loader, val_loader, test_loader = create_data_loaders(
@@ -222,6 +230,7 @@ def main():
         save_example_images(epsilons, examples, args.adv_filename, False)
     if args.orig_filename is not None:
         log.info("Saving the original images")
+        # TODO: test not specifying filename
         save_example_images(epsilons, orig_examples, args.orig_filename, False)
     if args.perturb_filename is not None:
         log.info("Saving the perturbations")

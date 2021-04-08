@@ -15,7 +15,7 @@ ch.setFormatter(formatter)
 log.addHandler(fh)
 log.addHandler(ch)
 
-
+                                        # TODO: try c = 1.0
 def cw_l2(model: nn.Module, images, labels, c=10.0, kappa=0, max_iter=1000, learning_rate=0.01):
     images = images.clone().detach().cuda()
     labels = labels.clone().detach().cuda()
@@ -32,7 +32,8 @@ def cw_l2(model: nn.Module, images, labels, c=10.0, kappa=0, max_iter=1000, lear
         i, _ = torch.max((1 - one_hot_labels) * outputs, dim=1)  # wrong logits
         j = torch.masked_select(outputs, one_hot_labels.bool())  # correct logits
 
-        return torch.clamp(j - i, min=-kappa)
+        return torch.clamp(j - i, min=-kappa) # TODO: try returning torch.max here, in line with CW equation
+            # TODO: check first that torch.clamp and torch.max return the same type
     # tensor of zeroes same size as images
     w = torch.zeros_like(images, requires_grad=True).cuda()
 
@@ -41,7 +42,7 @@ def cw_l2(model: nn.Module, images, labels, c=10.0, kappa=0, max_iter=1000, lear
     prev = 1e10
 
     for step in range(max_iter):
-        if step % 50 == 0:
+        if step % 200 == 0:
             log.debug(f'Step {step} out of {max_iter}')
         # a = 1 / 2 * (nn.Tanh()(w) + 1) # TODO: try just using tanh()(w) by itself since range -1, 1
         a = nn.Tanh()(w)
