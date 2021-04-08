@@ -32,8 +32,8 @@ def cw_l2(model: nn.Module, images, labels, c=10.0, kappa=0, max_iter=1000, lear
         i, _ = torch.max((1 - one_hot_labels) * outputs, dim=1)  # wrong logits
         j = torch.masked_select(outputs, one_hot_labels.bool())  # correct logits
 
-        return torch.clamp(j - i, min=-kappa) # TODO: try returning torch.max here, in line with CW equation
-            # TODO: check first that torch.clamp and torch.max return the same type
+        return torch.clamp(j - i, min=-kappa)
+
     # tensor of zeroes same size as images
     w = torch.zeros_like(images, requires_grad=True).cuda()
 
