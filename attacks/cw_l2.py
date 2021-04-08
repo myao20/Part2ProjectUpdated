@@ -15,7 +15,7 @@ ch.setFormatter(formatter)
 log.addHandler(fh)
 log.addHandler(ch)
 
-                                        # TODO: try c = 1.0
+
 def cw_l2(model: nn.Module, images, labels, c=10.0, kappa=0, max_iter=1000, learning_rate=0.01):
     images = images.clone().detach().cuda()
     labels = labels.clone().detach().cuda()
@@ -44,7 +44,6 @@ def cw_l2(model: nn.Module, images, labels, c=10.0, kappa=0, max_iter=1000, lear
     for step in range(max_iter):
         if step % 200 == 0:
             log.debug(f'Step {step} out of {max_iter}')
-        # a = 1 / 2 * (nn.Tanh()(w) + 1) # TODO: try just using tanh()(w) by itself since range -1, 1
         a = nn.Tanh()(w)
 
         loss1 = nn.MSELoss(reduction='sum')(a, images)
@@ -63,6 +62,5 @@ def cw_l2(model: nn.Module, images, labels, c=10.0, kappa=0, max_iter=1000, lear
                 return a
             prev = cost
 
-    # attack_images = 1 / 2 * (nn.Tanh()(w) + 1)  # TODO: try just using tanh()(w) by itself since range -1, 1
     attack_images = nn.Tanh()(w)
     return attack_images.cuda(), initial_outputs
