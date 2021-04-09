@@ -70,7 +70,12 @@ def log_metrics(y_true: List[int], y_pred: List[int]) -> None:
     log.info(f'Precision: {precision_score(y_true, y_pred):.2f}')
     log.info(f'Recall: {recall_score(y_true, y_pred):.2f}')
     log.info(f'F1 score: {f1_score(y_true, y_pred):.2f}')
-    print(confusion_matrix(y_true, y_pred))
+    cm = confusion_matrix(y_true, y_pred)
+    tn, fp = cm[0][0], cm[0][1]
+    specificity = tn / (tn + fp)
+    log.info(f'Specificity: {specificity:.2f}')
+    print(cm)
+    # TODO: test model6
 
 
 def main():
