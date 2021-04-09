@@ -111,7 +111,7 @@ def test_attack(test_model: nn.Module, test_loader: DataLoader, eps: float, crit
         elif attack_name == 'pgd':
             adv_images, outputs = pgd(test_model, images, labels, eps, criterion)
         elif attack_name == 'cwl2':
-            adv_images, outputs = cw_l2(test_model, images, labels, c=0.001)
+            adv_images, outputs = cw_l2(test_model, images, labels)
         else:  # cw l-inf attack
             adv_images, outputs = cw_l_inf(test_model, images, labels, eps)
 

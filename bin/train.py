@@ -106,14 +106,16 @@ def main():
     log.info("Starting to train the model")
     args = parser.parse_args()
     log.info(f'Attack being applied is: {args.attack}')
+    # TODO: add test for file not found errors BEFORE training starts - add function in utils?
+
     trainer.train_model(adv_train=config["training"]["adv_train"], attack=args.attack)
 
-    # Write logs
-    log.info("Writing results to file")
-    trainer.write_logs_to_file(args.train_loss, args.train_acc, args.val_loss, args.val_acc)
     log.info("Saving model")
     # trainer.save_model_to_file("models/adv_model_fgsm1.pth")
     trainer.save_model_to_file(args.model_path)
+    # Write logs
+    log.info("Writing results to file")
+    trainer.write_logs_to_file(args.train_loss, args.train_acc, args.val_loss, args.val_acc)
 
 
 if __name__ == "__main__":
