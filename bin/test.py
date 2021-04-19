@@ -5,6 +5,7 @@ import os
 import torch
 from sklearn.metrics import accuracy_score, precision_score, f1_score, recall_score
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import roc_auc_score
 from data.dataloader import create_data_loaders
 from model.base import model
 from torch.utils.data import DataLoader
@@ -52,9 +53,6 @@ def get_predictions(path_to_model: str, test_loader: DataLoader) -> Tuple[List[i
             data, target = data[0].cuda(), data[1].cuda()
             y_true.extend(target)
             outputs = test_model(data)
-            # y = torch.zeros(list(outputs.size())[0], 2)
-            # y[range(y.shape[0]), target] = 1
-
             _, preds = torch.max(outputs.data, 1)
             y_pred.extend(preds)
             test_running_correct += (preds == target).sum().item()
@@ -70,16 +68,15 @@ def log_metrics(y_true: List[int], y_pred: List[int]) -> None:
     log.info(f'Precision: {precision_score(y_true, y_pred):.2f}')
     log.info(f'Recall: {recall_score(y_true, y_pred):.2f}')
     log.info(f'F1 score: {f1_score(y_true, y_pred):.2f}')
+    log.info(f'AUC: {roc_auc_score(y_true, y_pred):.2f}')
     cm = confusion_matrix(y_true, y_pred)
     tn, fp = cm[0][0], cm[0][1]
     specificity = tn / (tn + fp)
     log.info(f'Specificity: {specificity:.2f}')
     print(cm)
-    # TODO: test model6
 
 
 def main():
-    # TODO: find a way to get test_loader from the model used - from the instance of 'Trainer'
     train_loader, val_loader, test_loader = create_data_loaders(
         config["dataset"]["csv_name"]
     )
