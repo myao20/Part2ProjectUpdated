@@ -65,10 +65,10 @@ parser.add_argument(
 
 
 def lists_from_files(path_to_file1: str, path_to_file2: str) -> Tuple[List[float], List[float]]:
-    with open(path_to_file1) as f:
+    with open(os.path.join(config["output_path"], path_to_file1)) as f:
         l1 = f.read().splitlines()
         l1 = [float(i) for i in l1]
-    with open(path_to_file2) as f:
+    with open(os.path.join(config["output_path"], path_to_file2)) as f:
         l2 = f.read().splitlines()
         l2 = [float(i) for i in l2]
     return l1, l2
