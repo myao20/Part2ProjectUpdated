@@ -30,3 +30,8 @@ def write_list_to_file(
     with open(file_name, "w") as f:
         for item in my_list:
             f.write("%s\n" % item)
+
+
+def check_path_valid(file_path: str) -> bool:
+    dir_path = os.path.dirname(file_path)
+    return os.path.isdir(dir_path)
