@@ -97,7 +97,6 @@ class Trainer:
             if adv_train:
                 rand_num = np.random.uniform(size=1)[0]
                 if rand_num <= config["training"]["prop_adv_train"]:
-                    # TODO: try cwl-inf with 0.5 as proportion, 100 epochs
                     if attack == 'fgsm':
                         adv_images, _ = fgsm(self.model, data, target, config["training"]["epsilon"], self.criterion)
                     elif attack == 'pgd':

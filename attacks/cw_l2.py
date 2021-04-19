@@ -24,8 +24,6 @@ def cw_l2(model: nn.Module, images, labels, c=10.0, kappa=0, max_iter=1000, lear
     # Define f-function
     def f(x):
         outputs = model(x)
-        # tensor of one-hot labels
-        # one_hot_labels = torch.eye(len(outputs[0]))[labels].cuda()
         y = torch.zeros(list(outputs.size())[0], 2)
         y[range(y.shape[0]), labels] = 1
         one_hot_labels = y.cuda()
@@ -62,5 +60,5 @@ def cw_l2(model: nn.Module, images, labels, c=10.0, kappa=0, max_iter=1000, lear
                 return a
             prev = cost
 
-    attack_images = nn.Tanh()(w).detach()  # TODO: test with c = 1.0, 0.1 with .detach() and  maybe c=10.0
+    attack_images = nn.Tanh()(w).detach()
     return attack_images.cuda(), initial_outputs
