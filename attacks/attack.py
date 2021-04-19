@@ -109,41 +109,39 @@ def test_attack(test_model: nn.Module, test_loader: DataLoader, eps: float, crit
     perturbations = []
     y_true, y_pred = [], []
 
-    with torch.no_grad():
-        for images, labels in test_loader:
-            if attack_name == 'fgsm':
-                adv_images, outputs = fgsm(test_model, images, labels, eps, criterion)
-            elif attack_name == 'pgd':
-                adv_images, outputs = pgd(test_model, images, labels, eps, criterion)
-            elif attack_name == 'cwl2':
-                adv_images, outputs = cw_l2(test_model, images, labels)
-            else:  # cw l-inf attack
-                adv_images, outputs = cw_l_inf(test_model, images, labels, eps)
+    for images, labels in test_loader:
+        if attack_name == 'fgsm':
+            adv_images, outputs = fgsm(test_model, images, labels, eps, criterion)
+        elif attack_name == 'pgd':
+            adv_images, outputs = pgd(test_model, images, labels, eps, criterion)
+        elif attack_name == 'cwl2':
+            adv_images, outputs = cw_l2(test_model, images, labels)
+        else:  # cw l-inf attack
+            adv_images, outputs = cw_l_inf(test_model, images, labels, eps)
 
-            _, init_preds = torch.max(outputs.data, 1)
-            labels = labels.cuda()
-            y_true.extend(labels)
-            outputs = test_model(adv_images)
+        _, init_preds = torch.max(outputs.data, 1)
+        labels = labels.cuda()
+        y_true.extend(labels)
+        outputs = test_model(adv_images)
 
-            _, new_preds = torch.max(outputs.data, 1)
-            y_pred.extend(new_preds)
+        _, new_preds = torch.max(outputs.data, 1)
+        y_pred.extend(new_preds)
 
-            if len(adv_examples) < 5:
-                adv_example_indices = get_adv_indices(5 - len(adv_examples), init_preds, new_preds, labels)
-                for i in adv_example_indices:
-                    log.info(f'Adversarial example index: {i}')
-                    adv_ex = adv_images[i].squeeze().detach().cpu().numpy()
-                    adv_examples.append((init_preds[i].item(), new_preds[i].item(), adv_ex))
-                    orig_ex = images[i].squeeze().detach().cpu().numpy()
-                    orig_examples.append((init_preds[i].item(), new_preds[i].item(), orig_ex))
-                    perturbation = adv_ex - orig_ex
-                    perturbations.append((init_preds[i].item(), new_preds[i].item(), perturbation))
+        if len(adv_examples) < 5:
+            adv_example_indices = get_adv_indices(5 - len(adv_examples), init_preds, new_preds, labels)
+            for i in adv_example_indices:
+                log.info(f'Adversarial example index: {i}')
+                adv_ex = adv_images[i].squeeze().detach().cpu().numpy()
+                adv_examples.append((init_preds[i].item(), new_preds[i].item(), adv_ex))
+                orig_ex = images[i].squeeze().detach().cpu().numpy()
+                orig_examples.append((init_preds[i].item(), new_preds[i].item(), orig_ex))
+                perturbation = adv_ex - orig_ex
+                perturbations.append((init_preds[i].item(), new_preds[i].item(), perturbation))
 
-            correct += (new_preds == labels).sum().item()
+        correct += (new_preds == labels).sum().item()
 
-        accuracy = float(correct) / dataset_length
-        return accuracy, adv_examples, orig_examples, perturbations, [i.item() for i in y_true], \
-               [i.item() for i in y_pred]
+    accuracy = float(correct) / dataset_length
+    return accuracy, adv_examples, orig_examples, perturbations, [i.item() for i in y_true], [i.item() for i in y_pred]
 
 
 def run_attack(test_model: nn.Module, test_loader: DataLoader, epsilons: List[float], criterion, attack_name: str) -> \
