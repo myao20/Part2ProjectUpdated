@@ -3,6 +3,7 @@ import os
 import matplotlib.pyplot as plt
 from typing import List, Tuple
 import logging
+from utils.utils import exit_if_invalid_path
 
 import yaml
 
@@ -95,18 +96,24 @@ def make_loss_plots(train_loss: List[float], val_loss: List[float], path_name: s
 
 def plot_accuracy(train_accuracy_path: str, val_accuracy_path: str, acc_filename: str) -> None:
     train_accuracy, val_accuracy = lists_from_files(train_accuracy_path, val_accuracy_path)
-    # make_accuracy_plots(train_accuracy, val_accuracy, "plots/advfgsm_acc.png")
     make_accuracy_plots(train_accuracy, val_accuracy, acc_filename)
 
 
 def plot_loss(train_loss_path: str, val_loss_path: str, loss_filename: str) -> None:
     train_loss, val_loss = lists_from_files(train_loss_path, val_loss_path)
-    # make_loss_plots(train_loss, val_loss, "plots/advfgsm_loss.png")
     make_loss_plots(train_loss, val_loss, loss_filename)
 
 
 def main():
     args = parser.parse_args()
+
+    exit_if_invalid_path(args.acc_filename)
+    exit_if_invalid_path(args.loss_filename)
+    exit_if_invalid_path(args.train_acc)
+    exit_if_invalid_path(args.val_acc)
+    exit_if_invalid_path(args.train_loss)
+    exit_if_invalid_path(args.val_loss)
+
     log.info("Making accuracy plots")
     plot_accuracy(args.train_acc, args.val_acc, args.acc_filename)
     log.info("Making loss plots")

@@ -16,6 +16,7 @@ from torch.utils.data import DataLoader
 from attacks.pgd import pgd
 from data.dataloader import create_data_loaders
 from model.base import model
+from utils.utils import exit_if_invalid_path
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -199,6 +200,16 @@ def main():
     # epsilons = config["attacks"]["epsilons"]
     # epsilons = [0]
     args = parser.parse_args()
+
+    if args.attack != 'cwl2':
+        exit_if_invalid_path(args.filename)
+    if args.adv_filename is not None:
+        exit_if_invalid_path(args.adv_filename)
+    if args.orig_filename is not None:
+        exit_if_invalid_path(args.orig_filename)
+    if args.perturb_filename is not None:
+        exit_if_invalid_path(args.perturb_filename)
+
     if args.attack != 'cwl2':
         epsilons = [0, 0.2 / 255, 1 / 255, 2 / 255, 3 / 255, 4 / 255, 5 / 255]
     else:
@@ -230,7 +241,6 @@ def main():
         save_example_images(epsilons, examples, args.adv_filename, False)
     if args.orig_filename is not None:
         log.info("Saving the original images")
-        # TODO: test not specifying filename
         save_example_images(epsilons, orig_examples, args.orig_filename, False)
     if args.perturb_filename is not None:
         log.info("Saving the perturbations")

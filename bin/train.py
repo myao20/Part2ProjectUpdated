@@ -6,6 +6,7 @@ from torch import optim, nn
 from data.dataloader import create_data_loaders
 from model.base import model
 from training.trainer import Trainer
+from utils.utils import exit_if_invalid_path
 
 import yaml
 
@@ -105,13 +106,18 @@ def main():
     # train
     log.info("Starting to train the model")
     args = parser.parse_args()
+
+    exit_if_invalid_path(args.model_path)
+    exit_if_invalid_path(args.train_loss)
+    exit_if_invalid_path(args.train_acc)
+    exit_if_invalid_path(args.val_loss)
+    exit_if_invalid_path(args.val_acc)
+
     log.info(f'Attack being applied is: {args.attack}')
-    # TODO: add test for file not found errors BEFORE training starts - add function in utils?
 
     trainer.train_model(adv_train=config["training"]["adv_train"], attack=args.attack)
 
     log.info("Saving model")
-    # trainer.save_model_to_file("models/adv_model_fgsm1.pth")
     trainer.save_model_to_file(args.model_path)
     # Write logs
     log.info("Writing results to file")
@@ -119,19 +125,5 @@ def main():
 
 
 if __name__ == "__main__":
-    # # Parse command line args
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument(
-    #     "-c",
-    #     "--config",
-    #     default="../configs/",
-    #     help="Path to project config file",
-    #     required=False,
-    # )
-    # args = parser.parse_args()
-    #
-    # parser.parse_args()
-    # config = load_config("config.yaml")
-
     main()
 
