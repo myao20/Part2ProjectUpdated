@@ -14,6 +14,7 @@ import yaml
 from torch.utils.data import DataLoader
 
 from attacks.pgd import pgd
+from bin.test import log_metrics
 from data.dataloader import create_data_loaders
 from model.base import model
 from utils.utils import exit_if_invalid_path
@@ -98,44 +99,51 @@ def get_adv_indices(num: int, init_pre, new_pre, labels) -> np.ndarray:
 
 
 def test_attack(test_model: nn.Module, test_loader: DataLoader, eps: float, criterion, attack_name: str) -> Tuple[
-                float, List[Tuple[Any, Any, Any]], List[Tuple[Any, Any, Any]], List[Tuple[Any, Any, Any]]]:
+                float, List[Tuple[Any, Any, Any]], List[Tuple[Any, Any, Any]], List[Tuple[Any, Any, Any]], List[int],
+                List[int]]:
     test_model.eval()
     correct = 0
     dataset_length = len(test_loader.dataset)
     adv_examples = []
     orig_examples = []
     perturbations = []
+    y_true, y_pred = [], []
 
-    for images, labels in test_loader:
-        if attack_name == 'fgsm':
-            adv_images, outputs = fgsm(test_model, images, labels, eps, criterion)
-        elif attack_name == 'pgd':
-            adv_images, outputs = pgd(test_model, images, labels, eps, criterion)
-        elif attack_name == 'cwl2':
-            adv_images, outputs = cw_l2(test_model, images, labels)
-        else:  # cw l-inf attack
-            adv_images, outputs = cw_l_inf(test_model, images, labels, eps)
+    with torch.no_grad():
+        for images, labels in test_loader:
+            if attack_name == 'fgsm':
+                adv_images, outputs = fgsm(test_model, images, labels, eps, criterion)
+            elif attack_name == 'pgd':
+                adv_images, outputs = pgd(test_model, images, labels, eps, criterion)
+            elif attack_name == 'cwl2':
+                adv_images, outputs = cw_l2(test_model, images, labels)
+            else:  # cw l-inf attack
+                adv_images, outputs = cw_l_inf(test_model, images, labels, eps)
 
-        _, init_preds = torch.max(outputs.data, 1)
-        labels = labels.cuda()
-        outputs = test_model(adv_images)
+            _, init_preds = torch.max(outputs.data, 1)
+            labels = labels.cuda()
+            y_true.extend(labels)
+            outputs = test_model(adv_images)
 
-        _, new_preds = torch.max(outputs.data, 1)
-        if len(adv_examples) < 5:
-            adv_example_indices = get_adv_indices(5 - len(adv_examples), init_preds, new_preds, labels)
-            for i in adv_example_indices:
-                log.info(f'Adversarial example index: {i}')
-                adv_ex = adv_images[i].squeeze().detach().cpu().numpy()
-                adv_examples.append((init_preds[i].item(), new_preds[i].item(), adv_ex))
-                orig_ex = images[i].squeeze().detach().cpu().numpy()
-                orig_examples.append((init_preds[i].item(), new_preds[i].item(), orig_ex))
-                perturbation = adv_ex - orig_ex
-                perturbations.append((init_preds[i].item(), new_preds[i].item(), perturbation))
+            _, new_preds = torch.max(outputs.data, 1)
+            y_pred.extend(new_preds)
 
-        correct += (new_preds == labels).sum().item()
+            if len(adv_examples) < 5:
+                adv_example_indices = get_adv_indices(5 - len(adv_examples), init_preds, new_preds, labels)
+                for i in adv_example_indices:
+                    log.info(f'Adversarial example index: {i}')
+                    adv_ex = adv_images[i].squeeze().detach().cpu().numpy()
+                    adv_examples.append((init_preds[i].item(), new_preds[i].item(), adv_ex))
+                    orig_ex = images[i].squeeze().detach().cpu().numpy()
+                    orig_examples.append((init_preds[i].item(), new_preds[i].item(), orig_ex))
+                    perturbation = adv_ex - orig_ex
+                    perturbations.append((init_preds[i].item(), new_preds[i].item(), perturbation))
 
-    accuracy = float(correct) / dataset_length
-    return accuracy, adv_examples, orig_examples, perturbations
+            correct += (new_preds == labels).sum().item()
+
+        accuracy = float(correct) / dataset_length
+        return accuracy, adv_examples, orig_examples, perturbations, [i.item() for i in y_true], \
+               [i.item() for i in y_pred]
 
 
 def run_attack(test_model: nn.Module, test_loader: DataLoader, epsilons: List[float], criterion, attack_name: str) -> \
@@ -148,9 +156,9 @@ def run_attack(test_model: nn.Module, test_loader: DataLoader, epsilons: List[fl
 
     for eps in epsilons:
         log.info(f'Epsilon: {eps:.4f}')
-        acc, ex, orig, perturbation = test_attack(test_model, test_loader, eps, criterion, attack_name)
+        acc, ex, orig, perturbation, y_true, y_pred = test_attack(test_model, test_loader, eps, criterion, attack_name)
         log.info(f'Attack: {attack_name}')
-        log.info(f'Accuracy: {acc:.2f}')
+        log_metrics(y_true, y_pred)
         accuracies.append(acc)
         examples.append(ex)
         orig_examples.append(orig)
