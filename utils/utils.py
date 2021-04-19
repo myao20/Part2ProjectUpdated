@@ -32,6 +32,6 @@ def write_list_to_file(
             f.write("%s\n" % item)
 
 
-def check_path_valid(file_path: str) -> bool:
+def path_valid(file_path: str) -> bool:
     dir_path = os.path.dirname(file_path)
     return os.path.isdir(dir_path)
