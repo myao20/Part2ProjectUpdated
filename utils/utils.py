@@ -1,4 +1,5 @@
 import os
+import sys
 from typing import Any, List
 
 import torch
@@ -35,3 +36,8 @@ def write_list_to_file(
 def path_valid(file_path: str) -> bool:
     dir_path = os.path.dirname(file_path)
     return os.path.isdir(dir_path)
+
+
+def exit_if_invalid_path(file_path: str) -> None:
+    if not(path_valid(file_path)):
+        sys.exit("File path invalid: " + file_path)
