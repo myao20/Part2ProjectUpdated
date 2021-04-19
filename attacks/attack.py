@@ -209,7 +209,7 @@ def main():
     # epsilons = [0]
     args = parser.parse_args()
 
-    if args.attack != 'cwl2':
+    if args.attack != 'cwl2' and args.filename is not None:
         exit_if_invalid_path(os.path.join(config["output_path"], args.filename))
     if args.adv_filename is not None:
         exit_if_invalid_path(os.path.join(config["output_path"], args.adv_filename))
@@ -241,7 +241,7 @@ def main():
         test_model, test_loader, epsilons, criterion, args.attack
     )
 
-    if args.attack != 'cwl2':
+    if args.attack != 'cwl2' and args.filename is not None:
         log.info("Plotting results")
         plot_results(accuracies, epsilons, args.filename)
     if args.adv_filename is not None:
