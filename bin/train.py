@@ -114,7 +114,7 @@ def main():
     # train
     log.info("Starting to train the model")
 
-    if args.attack is not None:
+    if config["training"]["adv_train"]:
         log.info(f'Attack being applied is: {args.attack}')
 
     trainer.train_model(adv_train=config["training"]["adv_train"], attack=args.attack)
