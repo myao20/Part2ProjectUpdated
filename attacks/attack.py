@@ -202,13 +202,13 @@ def main():
     args = parser.parse_args()
 
     if args.attack != 'cwl2':
-        exit_if_invalid_path(args.filename)
+        exit_if_invalid_path(os.path.join(config["output_path"], args.filename))
     if args.adv_filename is not None:
-        exit_if_invalid_path(args.adv_filename)
+        exit_if_invalid_path(os.path.join(config["output_path"], args.adv_filename))
     if args.orig_filename is not None:
-        exit_if_invalid_path(args.orig_filename)
+        exit_if_invalid_path(os.path.join(config["output_path"], args.orig_filename))
     if args.perturb_filename is not None:
-        exit_if_invalid_path(args.perturb_filename)
+        exit_if_invalid_path(os.path.join(config["output_path"], args.perturb_filename))
 
     if args.attack != 'cwl2':
         epsilons = [0, 0.2 / 255, 1 / 255, 2 / 255, 3 / 255, 4 / 255, 5 / 255]

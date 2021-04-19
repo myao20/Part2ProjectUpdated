@@ -107,12 +107,12 @@ def plot_loss(train_loss_path: str, val_loss_path: str, loss_filename: str) -> N
 def main():
     args = parser.parse_args()
 
-    exit_if_invalid_path(args.acc_filename)
-    exit_if_invalid_path(args.loss_filename)
-    exit_if_invalid_path(args.train_acc)
-    exit_if_invalid_path(args.val_acc)
-    exit_if_invalid_path(args.train_loss)
-    exit_if_invalid_path(args.val_loss)
+    exit_if_invalid_path(os.path.join(config["output_path"], args.acc_filename))
+    exit_if_invalid_path(os.path.join(config["output_path"], args.loss_filename))
+    exit_if_invalid_path(os.path.join(config["output_path"], args.train_acc))
+    exit_if_invalid_path(os.path.join(config["output_path"], args.val_acc))
+    exit_if_invalid_path(os.path.join(config["output_path"], args.train_loss))
+    exit_if_invalid_path(os.path.join(config["output_path"], args.val_loss))
 
     log.info("Making accuracy plots")
     plot_accuracy(args.train_acc, args.val_acc, args.acc_filename)

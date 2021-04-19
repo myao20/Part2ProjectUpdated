@@ -103,17 +103,19 @@ def main():
         criterion=criterion,
     )
 
-    # train
-    log.info("Starting to train the model")
     args = parser.parse_args()
 
-    exit_if_invalid_path(args.model_path)
-    exit_if_invalid_path(args.train_loss)
-    exit_if_invalid_path(args.train_acc)
-    exit_if_invalid_path(args.val_loss)
-    exit_if_invalid_path(args.val_acc)
+    exit_if_invalid_path(os.path.join(config["output_path"], args.model_path))
+    exit_if_invalid_path(os.path.join(config["output_path"], args.train_loss))
+    exit_if_invalid_path(os.path.join(config["output_path"], args.train_acc))
+    exit_if_invalid_path(os.path.join(config["output_path"], args.val_loss))
+    exit_if_invalid_path(os.path.join(config["output_path"], args.val_acc))
 
-    log.info(f'Attack being applied is: {args.attack}')
+    # train
+    log.info("Starting to train the model")
+
+    if args.attack is not None:
+        log.info(f'Attack being applied is: {args.attack}')
 
     trainer.train_model(adv_train=config["training"]["adv_train"], attack=args.attack)
 
