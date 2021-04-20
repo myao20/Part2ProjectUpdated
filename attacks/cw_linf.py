@@ -21,8 +21,9 @@ def cw_l_inf(model: nn.Module, images, labels, eps, alpha=2 / 255, iters=40, kap
     perturbed_images = images.clone().detach()
 
     def f(outputs, labels):
-        one_hot_labels = torch.eye(len(outputs[0]))[labels].cuda()
-
+        y = torch.zeros(list(outputs.size())[0], 2)
+        y[range(y.shape[0]), labels] = 1
+        one_hot_labels = y.cuda()
         i, _ = torch.max((1 - one_hot_labels) * outputs, dim=1)
         j = torch.masked_select(outputs, one_hot_labels.bool())
         return torch.clamp(j - i, min=-kappa)
@@ -36,13 +37,10 @@ def cw_l_inf(model: nn.Module, images, labels, eps, alpha=2 / 255, iters=40, kap
         model.zero_grad()
         loss = -f(outputs, labels).sum()
 
-        if step == 0:
-            log.debug(f'Loss: {loss}')
-
         loss.backward()
 
         perturbed_images = perturbed_images.detach() + alpha * perturbed_images.grad.sign()
-        eta = torch.clamp(perturbed_images - images, min=-eps, max=eps)
-        images = torch.clamp(images + eta, min=-1, max=1).detach()
+        delta = torch.clamp(perturbed_images - images, min=-eps, max=eps)
+        images = torch.clamp(images + delta, min=-1, max=1).detach()
 
     return images.cuda(), initial_outputs

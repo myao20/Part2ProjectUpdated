@@ -21,7 +21,6 @@ def cw_l2(model: nn.Module, images, labels, c=10.0, kappa=0, max_iter=1000, lear
     labels = labels.clone().detach().cuda()
     initial_outputs = model(images)
 
-    # Define f-function
     def f(x):
         outputs = model(x)
         y = torch.zeros(list(outputs.size())[0], 2)
