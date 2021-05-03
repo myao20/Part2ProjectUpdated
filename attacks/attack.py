@@ -1,5 +1,6 @@
 import os
 import torch
+import time
 import logging
 import argparse
 import numpy as np
@@ -109,6 +110,7 @@ def test_attack(test_model: nn.Module, test_loader: DataLoader, eps: float, crit
     perturbations = []
     y_true, y_pred = [], []
 
+    start = time.time()
     for images, labels in test_loader:
         if attack_name == 'fgsm':
             adv_images, outputs = fgsm(test_model, images, labels, eps, criterion)
@@ -140,6 +142,8 @@ def test_attack(test_model: nn.Module, test_loader: DataLoader, eps: float, crit
 
         correct += (new_preds == labels).sum().item()
 
+    end = time.time()
+    log.info(f"{attack_name} attack time: {(end - start) / 60:.3f} minutes for epsilon of {eps}")
     accuracy = float(correct) / dataset_length
     return accuracy, adv_examples, orig_examples, perturbations, [i.item() for i in y_true], [i.item() for i in y_pred]
 
@@ -202,6 +206,7 @@ def save_example_images(epsilons: List[float], examples: List[List[Tuple[Any, An
 
 def main():
     # TODO: move this to config.yaml, need to change to just [0] when doing cwl2
+        # could remove this altogether if lacking time
     # epsilons = [0, 0.2 / 255, 1 / 255, 2 / 255, 3 / 255, 4 / 255, 5 / 255]
     # epsilons = config["attacks"]["epsilons"]
     # epsilons = [0]
