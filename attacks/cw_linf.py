@@ -19,7 +19,7 @@ def cw_l_inf(model: nn.Module, images, labels, eps, iters=20, kappa=0):
     images = images.clone().detach().cuda()
     labels = labels.clone().detach().cuda()
     perturbed_images = images.clone().detach()
-    alpha = eps/2
+    alpha = eps
 
     def f(outputs, labels):
         y = torch.zeros(list(outputs.size())[0], 2)
