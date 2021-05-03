@@ -2,10 +2,11 @@ import torch
 from torch import nn
 
 
-def pgd(model: nn.Module, images, labels, eps, criterion, alpha=2/255, iters=40):
+def pgd(model: nn.Module, images, labels, eps, criterion, iters=20):
     images = images.clone().detach().cuda()
     labels = labels.clone().detach().cuda()
     perturbed_images = images.clone().detach()
+    alpha = eps/10
 
     for i in range(iters):
         perturbed_images.requires_grad = True
