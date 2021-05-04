@@ -75,7 +75,7 @@ def lists_from_files(path_to_file1: str, path_to_file2: str) -> Tuple[List[float
 
 
 def make_accuracy_plots(train_accuracy: List[float], val_accuracy: List[float], path_name: str) -> None:
-    plt.figure(figsize=(10, 7))
+    plt.figure(figsize=(5.5, 3.8))
     plt.plot(train_accuracy, color="green", label="train accuracy")
     plt.plot(val_accuracy, color="blue", label="validation accuracy")
     plt.xlabel("Epochs")
@@ -85,7 +85,7 @@ def make_accuracy_plots(train_accuracy: List[float], val_accuracy: List[float], 
 
 
 def make_loss_plots(train_loss: List[float], val_loss: List[float], path_name: str) -> None:
-    plt.figure(figsize=(10, 7))
+    plt.figure(figsize=(5.5, 3.8))
     plt.plot(train_loss, color="orange", label="train loss")
     plt.plot(val_loss, color="red", label="validation loss")
     plt.xlabel("Epochs")
