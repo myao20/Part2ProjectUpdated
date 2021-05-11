@@ -8,7 +8,6 @@ import yaml
 from imutils import paths
 from sklearn.model_selection import train_test_split
 
-# TODO: change this to be an absolute path e.g. when running train.py
 CONFIG_PATH = "../configs/"
 
 

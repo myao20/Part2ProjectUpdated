@@ -47,7 +47,6 @@ class DRDataset(Dataset):
     def __getitem__(self, i):
         image = Image.open(self.X[i])
         path = self.X[i]
-        #log.info(path)
         try:
             image = self.aug(image=np.array(image))["image"]
             image = np.transpose(image, (2, 0, 1)).astype(np.float32)

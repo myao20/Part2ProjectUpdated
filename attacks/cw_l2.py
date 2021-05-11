@@ -36,11 +36,9 @@ def cw_l2(model: nn.Module, images, labels, c=10.0, kappa=0, max_iter=1000, lear
 
     optimizer = torch.optim.Adam([w], lr=learning_rate)
 
-    prev = 1e10
+    prev = 1e10  # initial high value
 
     for step in range(max_iter):
-        # if step % 200 == 0:
-         #   log.debug(f'Step {step} out of {max_iter}')
         a = nn.Tanh()(w)
 
         loss1 = nn.MSELoss(reduction='sum')(a, images)
@@ -51,9 +49,6 @@ def cw_l2(model: nn.Module, images, labels, c=10.0, kappa=0, max_iter=1000, lear
         optimizer.zero_grad()
         cost.backward()
         optimizer.step()
-
-        if step % 200 == 0:
-            log.debug(f'Cost: {cost}')
 
         # Stop early if the loss doesn't converge
         if step % (max_iter // 10) == 0:

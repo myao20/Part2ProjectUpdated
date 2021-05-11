@@ -206,11 +206,6 @@ def save_example_images(epsilons: List[float], examples: List[List[Tuple[Any, An
 
 
 def main():
-    # TODO: move this to config.yaml, need to change to just [0] when doing cwl2
-        # could remove this altogether if lacking time
-    # epsilons = [0, 0.2 / 255, 1 / 255, 2 / 255, 3 / 255, 4 / 255, 5 / 255]
-    # epsilons = config["attacks"]["epsilons"]
-    # epsilons = [0]
     args = parser.parse_args()
 
     if args.attack != 'cwl2' and args.filename is not None:
